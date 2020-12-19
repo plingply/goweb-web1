@@ -1,101 +1,136 @@
+
 <template>
-  <div :class="{'hidden':hidden}" class="pagination-container">
+  <div v-if="totalNum > 0" class="fenye-style">
+    <div>
+      <slot></slot>
+    </div>
     <el-pagination
-      :background="background"
-      :current-page.sync="currentPage"
-      :page-size.sync="pageSize"
-      :layout="layout"
-      :page-sizes="pageSizes"
-      :total="total"
+      class="fenye-style-pagination"
       v-bind="$attrs"
-      @size-change="handleSizeChange"
+      :page-size="sizes"
+      :page-sizes="pageSizes"
+      :total="totalNum"
+      :current-page="pages"
+      :layout="fyLayout"
       @current-change="handleCurrentChange"
-    />
+      @size-change="sizeChange"
+      @prev-click="prevClick"
+      v-on="$listeners"
+    ></el-pagination>
   </div>
 </template>
 
 <script>
-import { scrollTo } from '@/utils/scroll-to'
-
 export default {
-  name: 'Pagination',
   props: {
-    total: {
-      required: true,
-      type: Number
+    pageSizes: {
+      type: Array,
+      default: () => [10, 20, 30, 40, 50]
     },
-    page: {
+
+    pageNum: {
       type: Number,
       default: 1
     },
-    limit: {
+
+    sizeNum: {
       type: Number,
-      default: 20
+      default: 10
     },
-    pageSizes: {
-      type: Array,
-      default() {
-        return [10, 20, 30, 50]
-      }
+
+    totalNum: {
+      type: Number,
+      required: true,
+      default: 0
     },
-    layout: {
+
+    fyLayout: {
       type: String,
-      default: 'total, sizes, prev, pager, next, jumper'
+      default: "total, sizes, prev, pager, next, jumper"
     },
-    background: {
-      type: Boolean,
-      default: true
-    },
-    autoScroll: {
-      type: Boolean,
-      default: true
-    },
-    hidden: {
-      type: Boolean,
-      default: false
+
+    callback: {
+      type: Function,
+      default: () => {}
     }
   },
-  computed: {
-    currentPage: {
-      get() {
-        return this.page
-      },
-      set(val) {
-        this.$emit('update:page', val)
-      }
-    },
-    pageSize: {
-      get() {
-        return this.limit
-      },
-      set(val) {
-        this.$emit('update:limit', val)
-      }
+
+  data() {
+    return {
+      pages: 1,
+      sizes: 10
     }
   },
+
+  watch: {
+    pageNum(val) {
+      this.pages = val
+    }
+  },
+
+  mounted() {
+    if (this.sizeNum < 10) {
+      // eslint-disable-next-line vue/no-mutating-props
+      this.pageSizes.unshift(this.sizeNum)
+    }
+    this.pages = this.pageNum
+    this.sizes = this.sizeNum
+  },
+
   methods: {
-    handleSizeChange(val) {
-      this.$emit('pagination', { page: this.currentPage, limit: val })
-      if (this.autoScroll) {
-        scrollTo(0, 800)
-      }
-    },
     handleCurrentChange(val) {
-      this.$emit('pagination', { page: val, limit: this.pageSize })
-      if (this.autoScroll) {
-        scrollTo(0, 800)
-      }
+      this.pages = val
+      this.$emit("update:pageNum", val)
+      this.$emit("callback", {
+        pageNum: this.pages,
+        sizeNum: this.sizes,
+        type: "currentChange"
+      })
+    },
+
+    sizeChange(val) {
+      this.pages = 1
+      this.sizes = val
+      this.$emit("update:pageNum", 1)
+      this.$emit("update:sizeNum", val)
+      this.$emit("callback", {
+        pageNum: this.pages,
+        sizeNum: this.sizes,
+        type: "sizeChange"
+      })
+    },
+
+    prevClick() {
+      this.pages--
+      this.$emit("update:pageNum", this.pages)
+      this.$emit("callback", {
+        pageNum: this.pages,
+        sizeNum: this.sizes,
+        type: "prev"
+      })
+    },
+
+    nextClick() {
+      this.pages++
+      this.$emit("update:pageNum", this.pages)
+      this.$emit("callback", {
+        pageNum: this.pages,
+        sizeNum: this.sizes,
+        type: "next"
+      })
     }
   }
 }
 </script>
 
-<style scoped>
-.pagination-container {
-  background: #fff;
-  padding: 32px 16px;
+<style lang="scss" scoped>
+.fenye-style {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
 }
-.pagination-container.hidden {
-  display: none;
+
+.fenye-style-pagination {
+  // margin: 24px 0;
 }
 </style>
