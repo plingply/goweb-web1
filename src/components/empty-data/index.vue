@@ -8,7 +8,7 @@
 -->
 <template>
   <div class="empty" :style="{ height: emptyHeight }">
-    <img src="@/assets/image/components/empty.png" />
+    <img src="https://web.imeduplus.com/img/empty.8af13181.png" alt="">
     <span style="line-height:40px">暂无数据</span>
   </div>
 </template>
@@ -33,7 +33,7 @@ export default {
   justify-content: center;
   height: 500px;
   font-size: 12px;
-  color: $text_c9;
+  color: #999;
   img {
     object-fit: contain;
   }

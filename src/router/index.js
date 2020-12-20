@@ -71,6 +71,19 @@ export const constantRoutes = [
     ]
   },
   {
+    path: '/staff',
+    component: Layout,
+    redirect: '/staff/index',
+    children: [
+      {
+        path: 'index',
+        component: () => import('@/views/staff/index'),
+        name: '职工管理',
+        meta: { title: '职工管理', icon: 'el-icon-s-custom', noCache: true }
+      }
+    ]
+  },
+  {
     path: '/guide',
     component: Layout,
     redirect: '/guide/index',
@@ -361,10 +374,11 @@ export const asyncRoutes = [
   { path: '*', redirect: '/404', hidden: true }
 ]
 
-const createRouter = () => new Router({
-  scrollBehavior: () => ({ y: 0 }),
-  routes: constantRoutes
-})
+const createRouter = () =>
+  new Router({
+    scrollBehavior: () => ({ y: 0 }),
+    routes: constantRoutes
+  })
 
 const router = createRouter()
 

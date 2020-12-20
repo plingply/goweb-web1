@@ -1,5 +1,5 @@
 <template>
-  <div ref="tableWrapper" class="common-table-wrapper" :style="{height: heightStyle || ''}">
+  <div ref="tableWrapper" class="common-table-wrapper" :style="{ height: heightStyle || '' }">
     <el-table
       ref="table"
       v-bind="$attrs"
@@ -14,7 +14,7 @@
       <!-- 多选 -->
       <el-table-column
         v-if="selection"
-        :selectable="()=>true"
+        :selectable="() => true"
         :fixed="true"
         width="50"
         type="selection"
@@ -22,7 +22,7 @@
 
       <!-- 数据 -->
       <el-table-column
-        v-for="(item,index) of filterHeaders"
+        v-for="(item, index) of filterHeaders"
         :key="item.keyName ? item[item.keyName] : index"
         :prop="item.prop"
         :align="item.align || 'left'"
@@ -36,13 +36,9 @@
           <slot name="header" :column="item">{{ item.label }}</slot>
         </template>
         <template slot-scope="scope">
-          <slot
-            :column="item"
-            :prop="item.prop"
-            :row="scope.row"
-            :scope="scope"
-            :value="scope.row[item.prop]"
-          >{{ renderCell(scope, item) }}</slot>
+          <slot :column="item" :prop="item.prop" :row="scope.row" :scope="scope" :value="scope.row[item.prop]">{{
+            renderCell(scope, item)
+          }}</slot>
         </template>
       </el-table-column>
 
@@ -55,7 +51,7 @@
         :align="showOperatingObj.align"
         prop="_operation"
       >
-        <template slot-scope="{row,$index}">
+        <template slot-scope="{ row, $index }">
           <slot name="operation" :row="row" :index="$index"></slot>
         </template>
       </el-table-column>
@@ -66,12 +62,12 @@
   </div>
 </template>
 
-<script type='text/ecmascript-6'>
+<script>
 export default {
   props: {
     heightStyle: {
       type: String,
-      default: ""
+      default: ''
     },
     headers: {
       type: Array,
@@ -80,12 +76,12 @@ export default {
     // 尺寸
     size: {
       type: String,
-      default: "small"
+      default: 'small'
     },
     // border
     border: {
       type: Boolean,
-      default: true
+      default: false
     },
     // 是否显示分页
     paging: {
@@ -105,7 +101,7 @@ export default {
     // 序列名称
     indexText: {
       type: String,
-      default: "#"
+      default: '#'
     },
 
     // 是否显示操作栏
@@ -117,12 +113,12 @@ export default {
     // 空状态高度
     emptyHeight: {
       type: String,
-      default: ""
+      default: ''
     }
   },
   data() {
     return {
-      tableInnerHeight: "auto"
+      tableInnerHeight: 'auto'
     }
   },
   computed: {
@@ -131,18 +127,18 @@ export default {
     },
     // 操作栏样式
     showOperatingObj() {
-      const obj = this.headers.find((item) => item.prop === "_operation")
+      const obj = this.headers.find((item) => item.prop === '_operation')
       const defalutStyle = {
-        width: "150px",
-        label: "操作",
-        fixed: "right",
-        align: "left"
+        width: '150px',
+        label: '操作',
+        fixed: 'right',
+        align: 'left'
       }
       return obj ? Object.assign(defalutStyle, obj) : defalutStyle
     },
     // 去除操作栏
     filterHeaders() {
-      return this.headers.filter((item) => item.prop !== "_operation")
+      return this.headers.filter((item) => item.prop !== '_operation')
     }
   },
   mounted() {
@@ -156,9 +152,9 @@ export default {
   methods: {
     formatValue(row, prop) {
       // 只处理一个小数点
-      if (prop.indexOf(".") > -1) {
-        const key1 = prop.split(".")[0]
-        const key2 = prop.split(".")[1]
+      if (prop.indexOf('.') > -1) {
+        const key1 = prop.split('.')[0]
+        const key2 = prop.split('.')[1]
         return row[key1][key2]
       } else {
         return row[prop]
@@ -173,7 +169,7 @@ export default {
     },
     // https://github.com/ElemeFE/element/issues/4109 table height bug
     handleTableInnerHeight() {
-      this.tableInnerHeight = this.heightStyle ? this.$refs.tableWrapper.offsetHeight - (this.paging ? 48 : 0) : ""
+      this.tableInnerHeight = this.heightStyle ? this.$refs.tableWrapper.offsetHeight - (this.paging ? 48 : 0) : ''
     },
     // 清空多选
     clearSelection() {

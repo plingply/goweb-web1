@@ -11,7 +11,7 @@ NProgress.configure({ showSpinner: false }) // NProgress Configuration
 
 const whiteList = ['/login', '/auth-redirect'] // no redirect whitelist
 
-router.beforeEach(async(to, from, next) => {
+router.beforeEach(async (to, from, next) => {
   // start progress bar
   NProgress.start()
 
@@ -45,11 +45,13 @@ router.beforeEach(async(to, from, next) => {
             // hack method to ensure that addRoutes is complete
             // set the replace: true, so the navigation will not leave a history record
 
-            store.dispatch('school/getSchoolList')
-              .then(res => {
+            store
+              .dispatch('school/getSchoolList')
+              .then((res) => {
                 store.commit('school/SET_SCHOOLLIST', res)
                 let schoolId = $s.ls_get('school_id')
-                const result = res.some(item => {
+
+                const result = res.some((item) => {
                   if (item.school_id === schoolId) {
                     return true
                   }
@@ -59,11 +61,17 @@ router.beforeEach(async(to, from, next) => {
                   schoolId = res[0].school_id
                 }
                 store.commit('school/SET_SCHOOLID', schoolId)
+
+                store.dispatch('school/getCampusSimpleList', {
+                  school_id: schoolId
+                })
+
                 NProgress.done()
                 next({ ...to, replace: true })
-              }).catch(async(error) => {
+              })
+              .catch(async (error) => {
                 await store.dispatch('user/resetToken')
-                Message.error(error || 'Has Error')
+                Message.error(error)
                 NProgress.done()
               })
           } else {

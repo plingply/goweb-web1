@@ -18,12 +18,17 @@ import './utils/error-log' // error log
 
 import * as filters from './filters' // global filters
 
+// 全局组件
+import indexComponents from '@/components'
+
+Vue.use(indexComponents)
+
 Vue.use(Element, {
   size: 'medium' // set element-ui default size
 })
 
 // register global utility filters
-Object.keys(filters).forEach(key => {
+Object.keys(filters).forEach((key) => {
   Vue.filter(key, filters[key])
 })
 
@@ -34,5 +39,5 @@ new Vue({
   el: '#app',
   router,
   store,
-  render: h => h(App)
+  render: (h) => h(App)
 })
