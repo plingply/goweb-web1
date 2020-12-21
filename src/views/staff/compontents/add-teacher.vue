@@ -9,41 +9,57 @@
     <template #content>
       <div class="myfrom">
         <el-form ref="form" :model="form" label-width="80px">
-          <el-form-item label="选择校区">
-            <el-select style="width: 100%" v-model="form.campus_id" placeholder="请选择校区">
-              <el-option v-for="item in campusList" :key="item.id" :label="item.campus_name" :value="item.id">
-              </el-option>
-            </el-select>
-          </el-form-item>
-
           <el-form-item label="老师姓名">
-            <el-input style="width: 100%" v-model="form.teacher_name" placeholder="请输入老师姓名"></el-input>
+            <el-input
+              v-model="form.teacher_name"
+              maxlength="10"
+              style="width: 100%"
+              placeholder="请输入老师姓名"
+            />
           </el-form-item>
 
           <el-form-item label="性别">
             <el-radio-group v-model="form.sex">
-              <el-radio :label="1">男</el-radio>
-              <el-radio :label="2">女</el-radio>
-              <el-radio :label="3">保密</el-radio>
+              <el-radio label="1">男</el-radio>
+              <el-radio label="2">女</el-radio>
+              <el-radio label="3">保密</el-radio>
             </el-radio-group>
           </el-form-item>
 
-          <el-form-item label="联系电话">
-            <el-input style="width: 100%" v-model="form.phone" placeholder="请输入联系电话"></el-input>
+          <el-form-item v-if="!teacherInfo" label="联系电话">
+            <el-input
+              v-model="form.phone"
+              style="width: 100%"
+              maxlength="11"
+              placeholder="请输入联系电话"
+            />
           </el-form-item>
 
           <el-form-item label="老师生日">
-            <el-date-picker style="width: 100%" v-model="form.birthday" type="date" placeholder="选择日期">
-            </el-date-picker>
+            <el-date-picker
+              v-model="form.birthday"
+              style="width: 100%"
+              type="date"
+              placeholder="选择日期"
+            />
           </el-form-item>
 
           <el-form-item label="入职日期">
-            <el-date-picker style="width: 100%" v-model="form.entry_at" type="date" placeholder="选择日期">
-            </el-date-picker>
+            <el-date-picker
+              v-model="form.entry_at"
+              style="width: 100%"
+              type="date"
+              placeholder="选择日期"
+            />
           </el-form-item>
 
           <el-form-item label="联系地址">
-            <el-input style="width: 100%" v-model="form.address" placeholder="请输入联系地址"></el-input>
+            <el-input
+              v-model="form.address"
+              maxlength="50"
+              style="width: 100%"
+              placeholder="请输入联系地址"
+            />
           </el-form-item>
         </el-form>
       </div>
@@ -78,7 +94,8 @@ export default {
         phone: '',
         birthday: '',
         entry_at: '',
-        address: ''
+        address: '',
+        Identity: 'campus'
       },
       submitLoading: false
     }
@@ -98,8 +115,8 @@ export default {
       return this.$store.state.school.schoolId
     },
 
-    campusList() {
-      return this.$store.state.school.campusList
+    campus_id() {
+      return this.$store.state.school.campus_id
     }
   },
 
@@ -107,9 +124,7 @@ export default {
     onOpen() {
       if (this.teacherInfo) {
         Object.keys(this.form).map((k) => {
-          if (k == 'sex') {
-            this.form[k] = this.teacherInfo[k] * 1
-          } else if (k == 'birthday' || k == 'entry_at') {
+          if (k === 'birthday' || k === 'entry_at') {
             this.form[k] = this.teacherInfo[k] ? new Date(this.teacherInfo[k] * 1) : ''
           } else {
             this.form[k] = this.teacherInfo[k]
@@ -164,6 +179,8 @@ export default {
       const data = { ...this.form }
       data.birthday = new Date(data.birthday).getTime()
       data.entry_at = new Date(data.entry_at).getTime()
+      data.campus_id = this.campus_id
+      data.Identity = 'teacher'
       teacherCreate(params, data)
         .then((res) => {
           this.submitLoading = false

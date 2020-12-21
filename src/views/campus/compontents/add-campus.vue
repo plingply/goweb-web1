@@ -10,15 +10,30 @@
       <div class="myfrom">
         <el-form ref="form" :model="form" label-width="80px">
           <el-form-item label="校区名称">
-            <el-input style="width: 100%" v-model="form.campus_name" placeholder="请输入校区名称"></el-input>
+            <el-input
+              v-model="form.campus_name"
+              style="width: 100%"
+              maxlength="20"
+              placeholder="请输入校区名称"
+            />
           </el-form-item>
 
           <el-form-item label="校区地址">
-            <el-cascader style="width: 100%" v-model="cityArr" :options="city" @change="handleChange"></el-cascader>
+            <el-cascader
+              v-model="cityArr"
+              style="width: 100%"
+              :options="city"
+              @change="handleChange"
+            />
           </el-form-item>
 
           <el-form-item label="详细地址">
-            <el-input style="width: 100%" v-model="form.address" placeholder="请输入校区详细地址"></el-input>
+            <el-input
+              v-model="form.address"
+              maxlength="50"
+              style="width: 100%"
+              placeholder="请输入校区详细地址"
+            />
           </el-form-item>
         </el-form>
       </div>

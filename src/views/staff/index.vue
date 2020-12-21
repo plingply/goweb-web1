@@ -1,13 +1,5 @@
 <template>
   <div class="app-container">
-    <div class="search-box">
-      <el-select v-model="campus_id" placeholder="请选择校区">
-        <el-option v-for="item in campusList" :key="item.id" :label="item.campus_name" :value="item.id"> </el-option>
-      </el-select>
-      <el-button type="primary" @click="searchfunc('')">查询</el-button>
-      <el-button plain @click="searchfunc('reset')">重置</el-button>
-    </div>
-
     <div style="margin-bottom:24px;">
       <el-button type="primary" @click="openAddteacher(true, '添加老师', null)">添加老师</el-button>
     </div>
@@ -33,7 +25,7 @@
       :title="title"
       :teacher-info="teacherInfo"
       @callback="teacherCallback"
-    ></add-teacher>
+    />
   </div>
 </template>
 
@@ -43,6 +35,9 @@ import { dateFormat } from '@/utils/date'
 import addTeacher from './compontents/add-teacher'
 
 export default {
+  components: {
+    addTeacher
+  },
   data() {
     return {
       loading: false,
@@ -58,7 +53,15 @@ export default {
         },
         {
           prop: 'sex',
-          label: '性别'
+          label: '性别',
+          formatter(row, column, value) {
+            const sexArr = {
+              1: '男',
+              2: '女',
+              3: '保密'
+            }
+            return sexArr[value]
+          }
         },
         {
           prop: 'birthday',
@@ -83,7 +86,6 @@ export default {
       total: 0,
       page: 1,
       limit: 10,
-      campus_id: '',
 
       showAddteacher: false,
       title: '',
@@ -91,17 +93,13 @@ export default {
     }
   },
 
-  components: {
-    addTeacher
-  },
-
   computed: {
     schoolId() {
       return this.$store.state.school.schoolId
     },
 
-    campusList() {
-      return this.$store.state.school.campusList
+    campus_id() {
+      return this.$store.state.school.campus_id
     }
   },
 
@@ -110,14 +108,6 @@ export default {
   },
 
   methods: {
-    searchfunc(reset) {
-      this.page = 1
-      if (reset) {
-        this.campus_id = ''
-      }
-      this.getTeacherList()
-    },
-
     teacherCallback() {
       this.getTeacherList()
     },

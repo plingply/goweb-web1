@@ -2,7 +2,7 @@
 <template>
   <div v-if="totalNum > 0" class="fenye-style">
     <div>
-      <slot></slot>
+      <slot />
     </div>
     <el-pagination
       class="fenye-style-pagination"
@@ -16,7 +16,7 @@
       @size-change="sizeChange"
       @prev-click="prevClick"
       v-on="$listeners"
-    ></el-pagination>
+    />
   </div>
 </template>
 
@@ -46,7 +46,7 @@ export default {
 
     fyLayout: {
       type: String,
-      default: "total, sizes, prev, pager, next, jumper"
+      default: 'total, sizes, prev, pager, next, jumper'
     },
 
     callback: {
@@ -70,7 +70,6 @@ export default {
 
   mounted() {
     if (this.sizeNum < 10) {
-      // eslint-disable-next-line vue/no-mutating-props
       this.pageSizes.unshift(this.sizeNum)
     }
     this.pages = this.pageNum
@@ -80,43 +79,43 @@ export default {
   methods: {
     handleCurrentChange(val) {
       this.pages = val
-      this.$emit("update:pageNum", val)
-      this.$emit("callback", {
+      this.$emit('update:pageNum', val)
+      this.$emit('callback', {
         pageNum: this.pages,
         sizeNum: this.sizes,
-        type: "currentChange"
+        type: 'currentChange'
       })
     },
 
     sizeChange(val) {
       this.pages = 1
       this.sizes = val
-      this.$emit("update:pageNum", 1)
-      this.$emit("update:sizeNum", val)
-      this.$emit("callback", {
+      this.$emit('update:pageNum', 1)
+      this.$emit('update:sizeNum', val)
+      this.$emit('callback', {
         pageNum: this.pages,
         sizeNum: this.sizes,
-        type: "sizeChange"
+        type: 'sizeChange'
       })
     },
 
     prevClick() {
       this.pages--
-      this.$emit("update:pageNum", this.pages)
-      this.$emit("callback", {
+      this.$emit('update:pageNum', this.pages)
+      this.$emit('callback', {
         pageNum: this.pages,
         sizeNum: this.sizes,
-        type: "prev"
+        type: 'prev'
       })
     },
 
     nextClick() {
       this.pages++
-      this.$emit("update:pageNum", this.pages)
-      this.$emit("callback", {
+      this.$emit('update:pageNum', this.pages)
+      this.$emit('callback', {
         pageNum: this.pages,
         sizeNum: this.sizes,
-        type: "next"
+        type: 'next'
       })
     }
   }

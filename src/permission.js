@@ -62,15 +62,22 @@ router.beforeEach(async (to, from, next) => {
                 }
                 store.commit('school/SET_SCHOOLID', schoolId)
 
-                store.dispatch('school/getCampusSimpleList', {
-                  school_id: schoolId
-                })
-
-                NProgress.done()
-                next({ ...to, replace: true })
+                store
+                  .dispatch('school/getCampusSimpleList', {
+                    school_id: schoolId
+                  })
+                  .then((res) => {
+                    NProgress.done()
+                    next({ ...to, replace: true })
+                  })
+                  .catch((error) => {
+                    store.dispatch('user/resetToken')
+                    Message.error(error)
+                    NProgress.done()
+                  })
               })
-              .catch(async (error) => {
-                await store.dispatch('user/resetToken')
+              .catch((error) => {
+                store.dispatch('user/resetToken')
                 Message.error(error)
                 NProgress.done()
               })
@@ -79,7 +86,7 @@ router.beforeEach(async (to, from, next) => {
           }
         } catch (error) {
           // remove token and go to login page to re-login
-          await store.dispatch('user/resetToken')
+          store.dispatch('user/resetToken')
           Message.error(error || 'Has Error')
           NProgress.done()
         }
