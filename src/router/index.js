@@ -11,6 +11,7 @@ import componentsRouter from './modules/components'
 import chartsRouter from './modules/charts'
 import tableRouter from './modules/table'
 import nestedRouter from './modules/nested'
+import edu from './modules/edu'
 
 export const constantRoutes = [
   {
@@ -83,6 +84,7 @@ export const constantRoutes = [
       }
     ]
   },
+  edu,
   {
     path: '/guide',
     component: Layout,

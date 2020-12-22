@@ -1,7 +1,7 @@
 <template>
   <page>
     <div style="margin-bottom:24px;">
-      <el-button type="primary" @click="openAddteacher(true, '添加老师', null)">添加老师</el-button>
+      <el-button type="primary" @click="openAddClass(true, '添加班级', null)">添加班级</el-button>
     </div>
 
     <common-table
@@ -12,26 +12,27 @@
       :total-num="total"
       :page-num.sync="page"
       :size-num.sync="limit"
-      @callback="getTeacherList"
+      @callback="getClassList"
     >
       <template slot="operation" slot-scope="{ row }">
-        <el-button type="text" @click="openAddteacher(true, '编辑老师', row)">编辑</el-button>
+        <el-button type="text" @click="openAddClass(true, '编辑班级', row)">编辑</el-button>
         <el-button class="btn-delete" type="text">删除</el-button>
       </template>
     </common-table>
 
-    <add-teacher :show.sync="showAddteacher" :title="title" :teacher-info="teacherInfo" @callback="teacherCallback" />
+    <add-class :show.sync="showAddClass" :title="title" :class-info="classInfo" @callback="classCallback" />
   </page>
 </template>
 
 <script>
-import { getTeacherList } from '@/api/teacher'
+import { getClassList } from '@/api/class'
 import { dateFormat } from '@/utils/date'
-import addTeacher from './compontents/add-teacher'
+import addClass from './compontents/add-class'
+import { classStatus, classType } from '@/config/index'
 
 export default {
   components: {
-    addTeacher
+    addClass
   },
   data() {
     return {
@@ -39,39 +40,26 @@ export default {
       list: [],
       headers: [
         {
-          prop: 'teacher_name',
-          label: '老师名称'
+          prop: 'class_name',
+          label: '班级名称'
         },
         {
-          prop: 'phone',
-          label: '联系电话'
-        },
-        {
-          prop: 'sex',
-          label: '性别',
+          prop: 'class_type',
+          label: '班级类型',
           formatter(row, column, value) {
-            const sexArr = {
-              1: '男',
-              2: '女',
-              3: '保密'
-            }
-            return sexArr[value]
+            return classType[value]
           }
         },
         {
-          prop: 'birthday',
-          label: '生日',
+          prop: 'status',
+          label: '班级状态',
           formatter(row, column, value) {
-            return dateFormat(value, 'YYYY-MM-DD')
+            return classStatus[value]
           }
         },
         {
-          prop: 'address',
-          label: '联系地址'
-        },
-        {
-          prop: 'entry_at',
-          label: '入职时间',
+          prop: 'created_at',
+          label: '创建时间',
           formatter(row, column, value) {
             return dateFormat(value, 'YYYY-MM-DD')
           }
@@ -82,9 +70,9 @@ export default {
       page: 1,
       limit: 10,
 
-      showAddteacher: false,
+      showAddClass: false,
       title: '',
-      teacherInfo: {}
+      classInfo: {}
     }
   },
 
@@ -99,23 +87,23 @@ export default {
   },
 
   created() {
-    this.getTeacherList()
+    this.getClassList()
   },
 
   methods: {
-    teacherCallback() {
-      this.getTeacherList()
+    classCallback() {
+      this.getClassList()
     },
 
-    openAddteacher(bool, title, teacherInfo) {
-      this.showAddteacher = bool
+    openAddClass(bool, title, classInfo) {
+      this.showAddClass = bool
       this.title = title
-      this.teacherInfo = teacherInfo
+      this.classInfo = classInfo
     },
 
-    getTeacherList() {
+    getClassList() {
       this.loading = true
-      getTeacherList({
+      getClassList({
         school_id: this.schoolId,
         campus_id: this.campus_id,
         page: this.page,
@@ -125,7 +113,6 @@ export default {
           this.loading = false
           this.list = res.data.item
           this.total = res.data.total
-          console.log('res:', res)
         })
         .catch(() => {
           this.loading = false

@@ -1,5 +1,5 @@
 <template>
-  <div class="app-container">
+  <page>
     <div style="margin-bottom:30px;">
       <el-button type="primary" @click="openAddCampus(true, '添加校区', null)">添加校区</el-button>
     </div>
@@ -26,7 +26,7 @@
       :campus-info="campusInfo"
       @callback="campusCallback"
     ></add-campus>
-  </div>
+  </page>
 </template>
 
 <script>
@@ -35,6 +35,10 @@ import { dateFormat } from '@/utils/date'
 import addCampus from './compontents/add-campus'
 
 export default {
+  components: {
+    addCampus
+  },
+
   data() {
     return {
       loading: false,
@@ -66,10 +70,6 @@ export default {
     }
   },
 
-  components: {
-    addCampus
-  },
-
   computed: {
     schoolId() {
       return this.$store.state.school.schoolId
@@ -98,7 +98,7 @@ export default {
         page: this.page,
         limit: this.limit
       })
-        .then((res) => {
+        .then(res => {
           this.loading = false
           this.list = res.data.item
           this.total = res.data.total
