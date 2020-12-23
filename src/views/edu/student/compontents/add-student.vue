@@ -44,7 +44,8 @@
                 :key="imagecropperKey"
                 :width="300"
                 :height="300"
-                url="https://httpbin.org/post"
+                url="http://127.0.0.1:8199/api/upload/file"
+                field="file"
                 lang-type="en"
                 @close="close"
                 @crop-upload-success="cropSuccess"
@@ -164,7 +165,7 @@ export default {
     cropSuccess(resData) {
       this.imagecropperShow = false
       this.imagecropperKey = this.imagecropperKey + 1
-      this.form.avatar = resData.files.avatar
+      this.form.avatar = resData
     },
     close() {
       this.imagecropperShow = false
@@ -172,6 +173,7 @@ export default {
 
     onOpen() {
       if (this.studentInfo) {
+        console.log(this.studentInfo)
         Object.keys(this.form).map((k) => {
           this.form[k] = this.studentInfo[k]
         })
