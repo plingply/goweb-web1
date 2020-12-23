@@ -8,3 +8,19 @@ export const classStatus = {
   '2': '已开班',
   '3': '已毕业'
 }
+
+export const sexObj = {
+  '1': '男',
+  '2': '女',
+  '3': '保密'
+}
+
+export const studentStatus = {
+  '1': '正常',
+  '2': '毕业'
+}
+
+export const subjectStatus = {
+  '1': '正常',
+  '2': '停用'
+}
