@@ -44,7 +44,7 @@
     <el-tabs v-model="activeName" @tab-click="handleClick">
       <el-tab-pane v-for="item in tabList" :key="item.name" :label="item.label" :name="item.name">
         <!-- <components :is="item.name" :key="item.name"></components> -->
-        <member-list></member-list>
+        <member-list v-if="activeName == 1"></member-list>
       </el-tab-pane>
     </el-tabs>
   </page>
@@ -59,19 +59,19 @@ export default {
 
   data() {
     return {
-      activeName: 'member-list',
+      activeName: '1',
       tabList: [
         {
           label: '班级课程',
-          name: 'member-list'
+          name: '1'
         },
         {
           label: '班级学员',
-          name: 'member-list'
+          name: '2'
         },
         {
           label: '考勤记录',
-          name: 'member-list'
+          name: '3'
         }
       ]
     }
