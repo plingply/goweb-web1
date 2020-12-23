@@ -3,17 +3,18 @@
     :visible.sync="visible"
     :title="title"
     :submit-loading="submitLoading"
-    @submit="postDataForSubject"
+    @submit="postDataForCard"
     @open="onOpen"
   >
     <template #content>
       <div class="myfrom">
         <el-form ref="form" :model="form" label-width="80px">
-          <el-form-item label="课程名称">
-            <el-input v-model="form.subject_name" maxlength="10" style="width: 100%" placeholder="请输入课程姓名" />
+          <el-form-item label="班级名称">
+            <el-input v-model="form.card_name" maxlength="10" style="width: 100%" placeholder="请输入学员卡名称" />
           </el-form-item>
+
           <el-form-item label="备注">
-            <el-input v-model="form.remark" maxlength="100" style="width: 100%" placeholder="请输入课程备注" />
+            <el-input v-model="form.remark" maxlength="100" style="width: 100%" placeholder="请输入学员卡备注" />
           </el-form-item>
         </el-form>
       </div>
@@ -22,7 +23,8 @@
 </template>
 
 <script>
-import { subjectUpdate, subjectCreate } from '@/api/subject'
+import { cardUpdate, cardCreate } from '@/api/card'
+import { classType } from '@/config/index'
 export default {
   props: {
     show: {
@@ -33,7 +35,7 @@ export default {
       type: String,
       defalut: ''
     },
-    subjectInfo: {
+    cardInfo: {
       type: Object,
       default: null
     }
@@ -42,8 +44,8 @@ export default {
   data() {
     return {
       form: {
-        subject_name: '',
-        remark: '',
+        card_name: '',
+        remark: '1',
         status: '1'
       },
       submitLoading: false
@@ -71,34 +73,34 @@ export default {
 
   methods: {
     onOpen() {
-      if (this.subjectInfo) {
+      if (this.cardInfo) {
         Object.keys(this.form).map(k => {
-          this.form[k] = this.subjectInfo[k]
+          this.form[k] = this.cardInfo[k]
         })
       } else {
         this.form = {
-          subject_name: '',
+          card_name: '',
           remark: '',
           status: '1'
         }
       }
     },
 
-    postDataForSubject() {
-      if (this.subjectInfo) {
-        this.subjectUpdate()
+    postDataForCard() {
+      if (this.cardInfo) {
+        this.cardUpdate()
       } else {
-        this.subjectCreate()
+        this.cardCreate()
       }
     },
 
-    subjectUpdate() {
+    cardUpdate() {
       const params = {
-        subject_id: this.subjectInfo.id
+        card_id: this.cardInfo.id
       }
       this.submitLoading = true
       const data = { ...this.form }
-      subjectUpdate(params, data)
+      cardUpdate(params, data)
         .then(res => {
           this.submitLoading = false
           this.$message({
@@ -114,14 +116,14 @@ export default {
         })
     },
 
-    subjectCreate() {
+    cardCreate() {
       this.submitLoading = true
       const params = {
         school_id: this.school_id,
         campus_id: this.campus_id
       }
       const data = { ...this.form }
-      subjectCreate(params, data)
+      cardCreate(params, data)
         .then(res => {
           this.submitLoading = false
           this.$message({

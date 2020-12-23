@@ -18,6 +18,21 @@
               <el-radio :label="v" v-for="(k, v) in classType" :key="k">{{ k }}</el-radio>
             </el-radio-group>
           </el-form-item>
+
+          <el-form-item label="班级容量">
+            <el-input-number
+              style="width: 100%"
+              v-model="form.capacity"
+              :min="0"
+              :max="99"
+              label="最大99"
+            ></el-input-number>
+            <div class="my-tips">班级容量不填或者为0，为不限人数</div>
+          </el-form-item>
+
+          <el-form-item label="备注">
+            <el-input v-model="form.remark" maxlength="100" style="width: 100%" placeholder="请输入班级备注" />
+          </el-form-item>
         </el-form>
       </div>
     </template>
@@ -48,7 +63,9 @@ export default {
       form: {
         class_name: '',
         class_type: '1',
-        status: '1'
+        remark: '',
+        status: '1',
+        capacity: 0
       },
       submitLoading: false,
       classType
@@ -84,7 +101,9 @@ export default {
         this.form = {
           class_name: '',
           class_type: '1',
-          status: '1'
+          remark: '',
+          status: '1',
+          capacity: 0
         }
       }
     },
@@ -149,5 +168,12 @@ export default {
 .myfrom {
   width: 300px;
   margin: 0 auto;
+}
+
+.my-tips {
+  font-size: 12px;
+  color: $text_c9;
+  line-height: 1;
+  padding-top: 4px;
 }
 </style>

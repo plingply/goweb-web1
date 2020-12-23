@@ -24,3 +24,13 @@ export const subjectStatus = {
   '1': '正常',
   '2': '停用'
 }
+
+export const cardStatus = {
+  '1': '正常',
+  '2': '停用'
+}
+
+export const classMemberStatus = {
+  '1': '在班',
+  '2': '离班'
+}

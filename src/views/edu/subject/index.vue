@@ -20,12 +20,7 @@
       </template>
     </common-table>
 
-    <add-subject
-      :show.sync="showAddSubject"
-      :title="title"
-      :subject-info="subjectInfo"
-      @callback="subjectCallback"
-    />
+    <add-subject :show.sync="showAddSubject" :title="title" :subject-info="subjectInfo" @callback="subjectCallback" />
   </page>
 </template>
 
@@ -54,6 +49,10 @@ export default {
           formatter(row, column, value) {
             return subjectStatus[value]
           }
+        },
+        {
+          prop: 'remark',
+          label: '备注'
         },
         {
           prop: 'created_at',
@@ -107,7 +106,7 @@ export default {
         page: this.page,
         limit: this.limit
       })
-        .then((res) => {
+        .then(res => {
           this.loading = false
           this.list = res.data.item
           this.total = res.data.total

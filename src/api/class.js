@@ -35,3 +35,12 @@ export function getClassSimpleList(params, data) {
     data
   })
 }
+
+export function getClassMemberList(params, data) {
+  return request({
+    url: '/api/class/member/list',
+    method: 'get',
+    params,
+    data
+  })
+}

@@ -53,7 +53,7 @@ export const constantRoutes = [
       {
         path: 'dashboard',
         component: () => import('@/views/dashboard/index'),
-        name: '数据看板',
+        name: 'dashboard',
         meta: { title: '数据看板', icon: 'dashboard', affix: true }
       }
     ]
@@ -66,7 +66,7 @@ export const constantRoutes = [
       {
         path: 'index',
         component: () => import('@/views/campus/index'),
-        name: '校区管理',
+        name: 'campus',
         meta: { title: '校区管理', icon: 'el-icon-school', noCache: true }
       }
     ]
@@ -79,7 +79,7 @@ export const constantRoutes = [
       {
         path: 'index',
         component: () => import('@/views/staff/index'),
-        name: '职工管理',
+        name: 'staff',
         meta: { title: '职工管理', icon: 'el-icon-s-custom', noCache: true }
       }
     ]

@@ -15,6 +15,7 @@
       @callback="getClassList"
     >
       <template slot="operation" slot-scope="{ row }">
+        <el-button type="text" @click="link('classInfo', row.id)">详情</el-button>
         <el-button type="text" @click="openAddClass(true, '编辑班级', row)">编辑</el-button>
         <el-button class="btn-delete" type="text">删除</el-button>
       </template>
@@ -49,6 +50,10 @@ export default {
           formatter(row, column, value) {
             return classType[value]
           }
+        },
+        {
+          prop: 'capacity',
+          label: '班级容量'
         },
         {
           prop: 'status',
@@ -91,6 +96,15 @@ export default {
   },
 
   methods: {
+    link(name, class_id) {
+      this.$router.push({
+        name,
+        params: {
+          class_id
+        }
+      })
+    },
+
     classCallback() {
       this.getClassList()
     },
