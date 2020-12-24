@@ -25,3 +25,21 @@ export function getZuowenInfo(params, data) {
     data: qs.stringify(data, { allowDots: true })
   })
 }
+
+export function getZuowenLastId(params, data) {
+  return request({
+    url: '/api/zuowen/lastid',
+    method: 'get',
+    params,
+    data
+  })
+}
+
+export function getZuowenList(params, data) {
+  return request({
+    url: '/api/zuowen/list',
+    method: 'get',
+    params,
+    data
+  })
+}

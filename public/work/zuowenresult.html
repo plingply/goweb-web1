@@ -1,0 +1,205 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>作文详情</title>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+    <meta name="renderer" content="webkit" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" />
+    <script src="https://s3.pstatp.com/cdn/expire-1-M/vue/2.6.10/vue.min.js" type="application/javascript"></script>
+    <script src="https://s0.pstatp.com/cdn/expire-1-M/axios/0.19.2/axios.min.js" type="application/javascript"></script>
+    <style>
+      body {
+        background-color: #def8fd;
+        height: 100%;
+        font-family: 'Helvetica Neue', Helvetica, STHeiTi, sans-serif;
+        line-height: 1.5;
+        font-size: 16px;
+        color: #4d4d4d;
+      }
+      * {
+        -webkit-box-sizing: border-box;
+        box-sizing: border-box;
+        -webkit-user-select: none;
+        outline: 0;
+        -webkit-tap-highlight-color: transparent;
+        -webkit-tap-highlight-color: transparent;
+      }
+      blockquote,
+      body,
+      code,
+      dd,
+      div,
+      dl,
+      dt,
+      fieldset,
+      form,
+      h1,
+      h2,
+      h3,
+      h4,
+      h5,
+      h6,
+      html,
+      img,
+      input,
+      legend,
+      li,
+      ol,
+      p,
+      pre,
+      sub,
+      sup,
+      td,
+      textarea,
+      th,
+      ul {
+        margin: 0;
+        padding: 0;
+      }
+
+      h1,
+      h2,
+      h3,
+      h4,
+      h5,
+      h6 {
+        line-height: 1;
+        margin-top: 5px;
+        margin-bottom: 5px;
+      }
+      em,
+      i {
+        font-style: normal;
+      }
+
+      .wrap {
+        max-width: 720px;
+        margin: 0 auto;
+        overflow: hidden;
+      }
+      .cont_block_f {
+        padding: 0 20px 20px 20px;
+      }
+      .modelessay_details_title {
+        padding-top: 20px;
+      }
+      .modelessay_details_title p .icon_green {
+        background: #5fd478;
+      }
+      .modelessay_details_title p i {
+        display: block;
+        width: 18px;
+        height: 18px;
+        border-radius: 50%;
+        overflow: hidden;
+        text-align: center;
+        line-height: 19px;
+        color: #fff;
+        margin-right: 8px;
+        font-size: 12px;
+      }
+      .zwTitle {
+        display: block;
+        width: 100%;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+        margin-bottom: 10px;
+        text-align: left;
+        font-weight: 700;
+        font-size: 16px;
+      }
+      .zwInfo {
+        display: flex;
+        margin-bottom: 8px;
+        font-size: 12px;
+        color: #999;
+      }
+      .modelessay_details_cont {
+        padding-top: 12px;
+        text-align: Justify;
+        text-justify: inter-ideograph;
+        line-height: 24px;
+        color: #666;
+        font-size: 14px;
+      }
+
+      .comments {
+        padding-top: 12px;
+        text-align: Justify;
+        text-justify: inter-ideograph;
+        line-height: 24px;
+        color: #337fe5;
+        font-size: 14px;
+      }
+      .comments > span {
+        color: #666;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="wrap" id="app">
+      <div class="cont_block_f">
+        <div class="modelessay_details_title">
+          <h2 class="zwTitle">{{ info.title }}</h2>
+          <p class="zwInfo">
+            <i class="icon_green">{{ info.quality }}</i>
+            {{ info.genre }} / {{ info.word_number }}字 / {{ info.grade }} / {{ info.theme }}
+          </p>
+        </div>
+        <div class="modelessay_details_cont" v-html="info.zw_content"></div>
+
+        <div class="comments" v-if="info.comments">
+          <span>点评:</span>
+          <div v-html="info.comments"></div>
+        </div>
+      </div>
+    </div>
+
+    <script>
+      new Vue({
+        el: '#app',
+        data: {
+          info: {}
+        },
+        created: function() {
+          this.getInfo()
+        },
+        methods: {
+          getQueryParams: function(name) {
+            var reg = new RegExp('(^|&)' + name + '=([^&]*)(&|$)', 'i')
+            var r = window.location.search.substr(1).match(reg)
+            if (r != null) return decodeURI(r[2])
+            return null
+          },
+          getInfo: function() {
+            let self = this
+            var url = 'http://localhost:8199/api/zuowen/info'
+            var id = this.getQueryParams('zuowen_id')
+            if (!id) {
+              alert('参数错误')
+              return
+            }
+            var formData = new FormData()
+            formData.append('zuowen_id', id)
+            axios
+              .post(url, formData, {
+                headers: {
+                  'content-type': 'application/x-www-form-urlencoded'
+                }
+              })
+              .then(function(res) {
+                self.info = res.data.data
+              })
+              .catch(function() {
+                alert('未知错误')
+              })
+          }
+        }
+      })
+    </script>
+  </body>
+</html>
