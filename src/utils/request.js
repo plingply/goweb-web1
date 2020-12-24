@@ -5,14 +5,20 @@ import { getToken, removeToken } from '@/utils/auth'
 
 const service = axios.create({
   baseURL: process.env.VUE_APP_BASE_API,
-  timeout: 5000
+  timeout: 5000,
+  withCredentials: false
 })
 
 service.interceptors.request.use(
   config => {
-    if (store.getters.token) {
-      config.headers['token'] = getToken()
+    console.log('req:', config)
+
+    if (config.url.indexOf('api.xhzapp.com') === -1) {
+      if (store.getters.token) {
+        config.headers['token'] = getToken()
+      }
     }
+
     return config
   },
   error => {
@@ -23,6 +29,11 @@ service.interceptors.request.use(
 service.interceptors.response.use(
   response => {
     const res = response.data
+    console.log('response:', response)
+
+    if (response.request.responseURL.indexOf('api.xhzapp.com') > -1) {
+      return res
+    }
 
     if (res.code !== 0) {
       Message({
@@ -32,18 +43,24 @@ service.interceptors.response.use(
       })
 
       if (res.code === 50008 || res.code === 50012 || res.code === 50014) {
-        MessageBox.confirm('You have been logged out, you can cancel to stay on this page, or log in again', 'Confirm logout', {
-          confirmButtonText: 'Re-Login',
-          cancelButtonText: 'Cancel',
-          type: 'warning'
-        }).then(() => {
-          store.dispatch('user/resetToken').then(() => {
-            location.reload()
+        MessageBox.confirm(
+          'You have been logged out, you can cancel to stay on this page, or log in again',
+          'Confirm logout',
+          {
+            confirmButtonText: 'Re-Login',
+            cancelButtonText: 'Cancel',
+            type: 'warning'
+          }
+        )
+          .then(() => {
+            store.dispatch('user/resetToken').then(() => {
+              location.reload()
+            })
           })
-        }).catch(() => {
-          removeToken()
-          window.location = '/'
-        })
+          .catch(() => {
+            removeToken()
+            window.location = '/'
+          })
       }
       return Promise.reject(new Error(res.message || 'Error'))
     } else {

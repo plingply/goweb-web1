@@ -2,6 +2,7 @@
   <page>
     <div style="margin-bottom:24px;">
       <el-button type="primary" @click="openAddSubject(true, '添加课程', null)">添加课程</el-button>
+      <el-button type="primary" @click="zuowenSync">同步作文</el-button>
     </div>
 
     <common-table
@@ -20,12 +21,17 @@
       </template>
     </common-table>
 
-    <add-subject :show.sync="showAddSubject" :title="title" :subject-info="subjectInfo" @callback="subjectCallback" />
+    <add-subject
+      :show.sync="showAddSubject"
+      :title="title"
+      :subject-info="subjectInfo"
+      @callback="subjectCallback"
+    />
   </page>
 </template>
 
 <script>
-import { getSubjectList } from '@/api/subject'
+import { getSubjectList, zuowenSync } from '@/api/subject'
 import { dateFormat } from '@/utils/date'
 import addSubject from './compontents/add-subject'
 import { subjectStatus } from '@/config/index'
@@ -92,6 +98,24 @@ export default {
       this.getSubjectList()
     },
 
+    zuowenSyncFunc() {
+      for (let i = 1; i < 3; i++) {
+        this.zuowenSync(i)
+      }
+    },
+
+    zuowenSync(id) {
+      zuowenSync(
+        {},
+        {
+          start: 1,
+          end: 3
+        }
+      ).then((res) => {
+        console.log(res)
+      })
+    },
+
     openAddSubject(bool, title, subjectInfo) {
       this.showAddSubject = bool
       this.title = title
@@ -106,7 +130,7 @@ export default {
         page: this.page,
         limit: this.limit
       })
-        .then(res => {
+        .then((res) => {
           this.loading = false
           this.list = res.data.item
           this.total = res.data.total

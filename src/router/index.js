@@ -86,6 +86,19 @@ export const constantRoutes = [
   },
   edu,
   {
+    path: '/zuowen',
+    component: Layout,
+    redirect: '/zuowen/index',
+    children: [
+      {
+        path: 'index',
+        component: () => import('@/views/zuowen/index'),
+        name: 'zuowen',
+        meta: { title: '作文管理', icon: 'el-icon-school', noCache: true }
+      }
+    ]
+  },
+  {
     path: '/guide',
     component: Layout,
     redirect: '/guide/index',
