@@ -72,7 +72,8 @@ export default {
       succ: 0,
       error: 0,
       start: false,
-      play: true
+      play: true,
+      id: 0
     }
   },
 
@@ -118,7 +119,8 @@ export default {
       getPeotryLastId().then((res) => {
         res.data = res.data == 0 ? 9999 : res.data
         this.start = true
-        this.forEachPeotry(res.data + 1)
+        const count = Math.max(res.data, this.id)
+        this.forEachPeotry(count + 1)
       })
     },
 
@@ -128,7 +130,7 @@ export default {
           shiId: i
         })
       }
-
+      this.id = id + 20
       this.getPeotryList()
       this.timeout = setTimeout(() => {
         this.getPeotryLastId()
