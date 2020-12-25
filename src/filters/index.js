@@ -1,7 +1,7 @@
 // import parseTime, formatTime and set to filter
 export { parseTime, formatTime } from '@/utils'
 
-export { dateFormat } from '@/utils/date'
+export { dateFormat, weekFormat } from '@/utils/date'
 /**
  * Show plural label if time is plural number
  * @param {number} time

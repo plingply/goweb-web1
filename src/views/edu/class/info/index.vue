@@ -27,37 +27,43 @@
     </div>
 
     <el-tabs v-model="activeName" @tab-click="handleClick">
-      <el-tab-pane v-for="item in tabList" :key="item.name" :label="item.label" :name="item.name">
-        <member-list v-if="activeName == 2"></member-list>
-      </el-tab-pane>
+      <template v-for="item in tabList">
+        <el-tab-pane :key="item.name" :label="item.label" :name="item.name">
+          <component :is="item.name" v-if="activeName == item.name"></component>
+        </el-tab-pane>
+      </template>
     </el-tabs>
   </page>
 </template>
 
 <script>
 import memberList from '../compontents/member-list'
+import courseList from '../compontents/course-list'
+import kaoqinList from '../compontents/kaoqin-list'
 import { getClassInfo } from '@/api/class'
 import { classStatus, classType } from '@/config/index'
 export default {
   components: {
-    memberList
+    memberList,
+    courseList,
+    kaoqinList
   },
 
   data() {
     return {
-      activeName: '1',
+      activeName: 'courseList',
       tabList: [
         {
           label: '班级课程',
-          name: '1'
+          name: 'courseList'
         },
         {
           label: '班级学员',
-          name: '2'
+          name: 'memberList'
         },
         {
           label: '考勤记录',
-          name: '3'
+          name: 'kaoqinList'
         }
       ],
 
