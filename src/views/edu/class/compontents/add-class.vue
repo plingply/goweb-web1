@@ -10,19 +10,24 @@
       <div class="myfrom">
         <el-form ref="form" :model="form" label-width="80px">
           <el-form-item label="班级名称">
-            <el-input v-model="form.class_name" maxlength="10" style="width: 100%" placeholder="请输入班级姓名" />
+            <el-input
+              v-model="form.class_name"
+              maxlength="10"
+              style="width: 100%"
+              placeholder="请输入班级姓名"
+            />
           </el-form-item>
 
           <el-form-item label="班级类型">
             <el-radio-group v-model="form.class_type">
-              <el-radio :label="v" v-for="(k, v) in classType" :key="k">{{ k }}</el-radio>
+              <el-radio v-for="(k, v) in classType" :key="k" :label="v">{{ k }}</el-radio>
             </el-radio-group>
           </el-form-item>
 
           <el-form-item label="班级容量">
             <el-input-number
-              style="width: 100%"
               v-model="form.capacity"
+              style="width: 100%"
               :min="0"
               :max="99"
               label="最大99"
@@ -31,7 +36,12 @@
           </el-form-item>
 
           <el-form-item label="备注">
-            <el-input v-model="form.remark" maxlength="100" style="width: 100%" placeholder="请输入班级备注" />
+            <el-input
+              v-model="form.remark"
+              maxlength="100"
+              style="width: 100%"
+              placeholder="请输入班级备注"
+            />
           </el-form-item>
         </el-form>
       </div>
@@ -80,21 +90,13 @@ export default {
       set(v) {
         this.$emit('update:show', v)
       }
-    },
-
-    school_id() {
-      return this.$store.state.school.schoolId
-    },
-
-    campus_id() {
-      return this.$store.state.school.campus_id
     }
   },
 
   methods: {
     onOpen() {
       if (this.classInfo) {
-        Object.keys(this.form).map(k => {
+        Object.keys(this.form).map((k) => {
           this.form[k] = this.classInfo[k]
         })
       } else {
@@ -123,7 +125,7 @@ export default {
       this.submitLoading = true
       const data = { ...this.form }
       classUpdate(params, data)
-        .then(res => {
+        .then((res) => {
           this.submitLoading = false
           this.$message({
             message: '更新成功',
@@ -132,7 +134,7 @@ export default {
           this.visible = false
           this.$emit('callback')
         })
-        .catch(err => {
+        .catch((err) => {
           this.submitLoading = false
           this.$message.error(err)
         })
@@ -146,7 +148,7 @@ export default {
       }
       const data = { ...this.form }
       classCreate(params, data)
-        .then(res => {
+        .then((res) => {
           this.submitLoading = false
           this.$message({
             message: '创建成功',
@@ -155,7 +157,7 @@ export default {
           this.visible = false
           this.$emit('callback')
         })
-        .catch(err => {
+        .catch((err) => {
           this.submitLoading = false
           this.$message.error(err)
         })

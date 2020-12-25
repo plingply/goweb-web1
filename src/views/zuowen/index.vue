@@ -4,7 +4,10 @@
       <el-button type="primary" :loading="start" :disabled="start" @click="getZuowenLastId">同步数据</el-button>
       <el-button plain @click="playFunc">{{ !play ? '开始' : '暂停' }}</el-button>
       <span class="progress">
-        成功 <span>{{ succ }}</span> 条，失败 <span>{{ error }}</span> 条</span></span
+        成功
+        <span>{{ succ }}</span> 条，失败
+        <span>{{ error }}</span> 条
+      </span>
       >
     </div>
 
@@ -26,7 +29,6 @@
 </template>
 
 <script>
-import { getCampusList } from '@/api/school'
 import { zuowenSync, getZuowenInfo, getZuowenLastId, getZuowenList } from '@/api/zuowen'
 import { dateFormat } from '@/utils/date'
 import md5 from 'md5'
@@ -78,6 +80,10 @@ export default {
     this.getZuowenList()
   },
 
+  destroyed() {
+    clearTimeout(this.timeout)
+  },
+
   methods: {
     link(zuowen_id) {
       window.open('/work/zuowenresult.html?zuowen_id=' + zuowen_id)
@@ -89,7 +95,7 @@ export default {
 
     playFunc() {
       this.play = !this.play
-      this.timeout = clearTimeout(this.timeout)
+      clearTimeout(this.timeout)
       if (this.play) {
         this.getZuowenLastId()
       }
@@ -101,7 +107,7 @@ export default {
         page: this.page,
         limit: this.limit
       })
-        .then(res => {
+        .then((res) => {
           this.loading = false
           this.list = res.data.item
           this.total = res.data.total
@@ -113,7 +119,7 @@ export default {
 
     getZuowenLastId() {
       if (!this.play) return
-      getZuowenLastId().then(res => {
+      getZuowenLastId().then((res) => {
         this.start = true
         this.forEachWZuoen(res.data + 1)
       })
@@ -134,7 +140,7 @@ export default {
 
     async syncData(data) {
       try {
-        let res = await zuowenSync({}, data)
+        await zuowenSync({}, data)
         this.succ++
         if (this.succ + this.error >= 20) {
           this.start = false
@@ -178,7 +184,7 @@ export default {
         o.hasOwnProperty(c) && ((a = o[c]), s.push(c + '=' + a))
       }
 
-      let res = await getZuowenInfo(null, o)
+      const res = await getZuowenInfo(null, o)
       if (res.code === 1) {
         const e = res.data
         const data = {

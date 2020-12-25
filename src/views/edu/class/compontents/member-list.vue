@@ -57,16 +57,6 @@ export default {
     }
   },
 
-  computed: {
-    schoolId() {
-      return this.$store.state.school.schoolId
-    },
-
-    campus_id() {
-      return this.$store.state.school.campus_id
-    }
-  },
-
   created() {
     this.getClassMemberList()
   },
@@ -75,13 +65,13 @@ export default {
     getClassMemberList() {
       this.loading = true
       getClassMemberList({
-        school_id: this.schoolId,
+        school_id: this.school_id,
         campus_id: this.campus_id,
         class_id: this.$route.params.class_id,
         page: this.page,
         limit: this.limit
       })
-        .then(res => {
+        .then((res) => {
           this.loading = false
           this.list = res.data.item
           this.total = res.data.total

@@ -88,16 +88,6 @@ export default {
     }
   },
 
-  computed: {
-    schoolId() {
-      return this.$store.state.school.schoolId
-    },
-
-    campus_id() {
-      return this.$store.state.school.campus_id
-    }
-  },
-
   created() {
     this.getStudentList()
   },
@@ -116,7 +106,7 @@ export default {
     getStudentList() {
       this.loading = true
       getStudentList({
-        school_id: this.schoolId,
+        school_id: this.school_id,
         campus_id: this.campus_id,
         page: this.page,
         limit: this.limit

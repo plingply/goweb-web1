@@ -146,14 +146,6 @@ export default {
       set(v) {
         this.$emit('update:show', v)
       }
-    },
-
-    school_id() {
-      return this.$store.state.school.schoolId
-    },
-
-    campus_id() {
-      return this.$store.state.school.campus_id
     }
   },
 

@@ -44,3 +44,12 @@ export function getClassMemberList(params, data) {
     data
   })
 }
+
+export function getClassInfo(params, data) {
+  return request({
+    url: '/api/class/info',
+    method: 'get',
+    params,
+    data
+  })
+}

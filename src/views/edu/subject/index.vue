@@ -20,7 +20,12 @@
       </template>
     </common-table>
 
-    <add-subject :show.sync="showAddSubject" :title="title" :subject-info="subjectInfo" @callback="subjectCallback" />
+    <add-subject
+      :show.sync="showAddSubject"
+      :title="title"
+      :subject-info="subjectInfo"
+      @callback="subjectCallback"
+    />
   </page>
 </template>
 
@@ -73,16 +78,6 @@ export default {
     }
   },
 
-  computed: {
-    schoolId() {
-      return this.$store.state.school.schoolId
-    },
-
-    campus_id() {
-      return this.$store.state.school.campus_id
-    }
-  },
-
   created() {
     this.getSubjectList()
   },
@@ -101,12 +96,12 @@ export default {
     getSubjectList() {
       this.loading = true
       getSubjectList({
-        school_id: this.schoolId,
+        school_id: this.school_id,
         campus_id: this.campus_id,
         page: this.page,
         limit: this.limit
       })
-        .then(res => {
+        .then((res) => {
           this.loading = false
           this.list = res.data.item
           this.total = res.data.total

@@ -83,10 +83,6 @@ export default {
       set(v) {
         this.$emit('update:show', v)
       }
-    },
-
-    schoolId() {
-      return this.$store.state.school.schoolId
     }
   },
 
@@ -143,7 +139,7 @@ export default {
 
     campusCreate() {
       const params = {
-        school_id: this.schoolId
+        school_id: this.school_id
       }
       this.submitLoading = true
       campusCreate(params, this.form)

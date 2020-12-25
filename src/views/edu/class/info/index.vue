@@ -1,41 +1,26 @@
 <template>
-  <page>
+  <page v-loading="loading">
     <h1 class="title">
-      <span>班级名称</span>
-      <el-tag type="danger">已停用</el-tag>
+      <span>{{ info.class_name }}</span>
+      <el-tag size="small" :type="tagType">{{ classStatus[info.status] }}</el-tag>
     </h1>
     <div class="class-info-box">
       <el-form ref="form" :model="{}" label-width="80px">
         <el-row :gutter="20">
           <el-col :span="8">
-            <el-form-item label="班级名称">
-              小小班
-            </el-form-item>
+            <el-form-item label="班级类型">{{ classType[info.class_type] }}</el-form-item>
           </el-col>
           <el-col :span="8">
-            <el-form-item label="班级类型">
-              临时班
-            </el-form-item>
+            <el-form-item label="班级容量">1/{{ info.capacity }}</el-form-item>
           </el-col>
           <el-col :span="8">
-            <el-form-item label="班级容量">
-              2
-            </el-form-item>
+            <el-form-item label="创建时间">{{ info.created_at | dateFormat('YYYY-MM-DD') }}</el-form-item>
           </el-col>
           <el-col :span="8">
-            <el-form-item label="创建时间">
-              2020-01-12
-            </el-form-item>
-          </el-col>
-          <el-col :span="8">
-            <el-form-item label="累计课消">
-              20课时
-            </el-form-item>
+            <el-form-item label="累计课消">--</el-form-item>
           </el-col>
           <el-col :span="24">
-            <el-form-item label="备注">
-              小小班
-            </el-form-item>
+            <el-form-item label="备注">{{ info.remark }}</el-form-item>
           </el-col>
         </el-row>
       </el-form>
@@ -43,8 +28,7 @@
 
     <el-tabs v-model="activeName" @tab-click="handleClick">
       <el-tab-pane v-for="item in tabList" :key="item.name" :label="item.label" :name="item.name">
-        <!-- <components :is="item.name" :key="item.name"></components> -->
-        <member-list v-if="activeName == 1"></member-list>
+        <member-list v-if="activeName == 2"></member-list>
       </el-tab-pane>
     </el-tabs>
   </page>
@@ -52,6 +36,8 @@
 
 <script>
 import memberList from '../compontents/member-list'
+import { getClassInfo } from '@/api/class'
+import { classStatus, classType } from '@/config/index'
 export default {
   components: {
     memberList
@@ -73,12 +59,48 @@ export default {
           label: '考勤记录',
           name: '3'
         }
-      ]
+      ],
+
+      info: {},
+      loading: false,
+      classStatus,
+      classType,
+      tagType: 'danger'
     }
   },
 
+  created() {
+    this.getClassInfo()
+  },
+
   methods: {
-    handleClick() {}
+    handleClick() {},
+
+    getClassInfo() {
+      this.loading = true
+      getClassInfo({
+        school_id: this.school_id,
+        campus_id: this.campus_id,
+        class_id: this.$route.params.class_id
+      })
+        .then((res) => {
+          this.loading = false
+          this.info = res.data
+
+          if (this.info.status == '1') {
+            this.tagType = 'info'
+          }
+          if (this.info.status == '2') {
+            this.tagType = 'success'
+          }
+          if (this.info.status == '3') {
+            this.tagType = 'danger'
+          }
+        })
+        .catch(() => {
+          this.loading = false
+        })
+    }
   }
 }
 </script>
@@ -90,6 +112,9 @@ export default {
   margin-bottom: 12px;
   font-size: 16px;
   color: $text_c3;
+  > span {
+    margin-right: 12px;
+  }
 }
 .class-info-box {
   border: 1px solid #eee;

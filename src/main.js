@@ -11,6 +11,7 @@ import App from './App'
 import store from './store'
 import router from './router'
 import storage from './utils/storage'
+import mixins from './mixin/index'
 
 import './icons' // icon
 import './permission' // permission control
@@ -21,6 +22,7 @@ import * as filters from './filters' // global filters
 // 全局组件
 import indexComponents from '@/components'
 
+Vue.mixin(mixins)
 Vue.use(indexComponents)
 
 Vue.use(Element, {
@@ -28,7 +30,7 @@ Vue.use(Element, {
 })
 
 // register global utility filters
-Object.keys(filters).forEach((key) => {
+Object.keys(filters).forEach(key => {
   Vue.filter(key, filters[key])
 })
 
@@ -39,5 +41,5 @@ new Vue({
   el: '#app',
   router,
   store,
-  render: (h) => h(App)
+  render: h => h(App)
 })
