@@ -40,23 +40,16 @@ export default {
       headers: [
         {
           prop: 'title',
-          label: '标题'
+          label: '标题',
+          width: '200px'
         },
         {
-          prop: 'genre',
-          label: '类型'
+          prop: 'author',
+          label: '作者'
         },
         {
-          prop: 'grade',
-          label: '所属年纪'
-        },
-        {
-          prop: 'theme',
-          label: '主题'
-        },
-        {
-          prop: 'read_count',
-          label: '阅读次数'
+          prop: 'years',
+          label: '年代'
         },
         {
           prop: 'updated_at',
@@ -130,7 +123,7 @@ export default {
           shiId: i
         })
       }
-      this.id = id + 20
+      this.id = id + 19
       this.getPeotryList()
       this.timeout = setTimeout(() => {
         this.getPeotryLastId()

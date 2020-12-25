@@ -1,7 +1,7 @@
 /*
  * @Author: 彭林
  * @Date: 2020-12-25 14:57:29
- * @LastEditTime: 2020-12-25 15:08:18
+ * @LastEditTime: 2020-12-25 16:16:11
  * @LastEditors: 彭林
  * @Description:
  * @FilePath: /goweb-web1/src/api/peotry.js
@@ -37,7 +37,7 @@ export function getPeotryLastId(params, data) {
 
 export function getPeotryList(params, data) {
   return request({
-    url: '/api/peotry/lastid',
+    url: '/api/peotry/list',
     method: 'get',
     params,
     data
