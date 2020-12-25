@@ -4,7 +4,7 @@ import store from '@/store'
 import { getToken, removeToken } from '@/utils/auth'
 
 const service = axios.create({
-  baseURL: process.env.VUE_APP_BASE_API,
+  baseURL: '',
   timeout: 30000,
   withCredentials: false
 })
