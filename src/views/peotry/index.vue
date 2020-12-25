@@ -1,7 +1,7 @@
 <template>
   <page>
     <div style="margin-bottom:30px;">
-      <el-button type="primary" :loading="start" :disabled="start" @click="getZuowenLastId">同步数据</el-button>
+      <el-button type="primary" :loading="start" :disabled="start" @click="getPeotryLastId">同步数据</el-button>
       <el-button plain @click="playFunc">{{ !play ? '开始' : '暂停' }}</el-button>
       <span class="progress">
         成功
@@ -19,7 +19,7 @@
       :total-num="total"
       :page-num.sync="page"
       :size-num.sync="limit"
-      @callback="getZuowenList"
+      @callback="getPeotryList"
     >
       <template slot="operation" slot-scope="{ row }">
         <el-button class="btn-delete" type="text" @click="link(row.zuowen_id)">详情</el-button>
@@ -29,7 +29,7 @@
 </template>
 
 <script>
-import { zuowenSync, getZuowenInfo, getZuowenLastId, getZuowenList } from '@/api/zuowen'
+import { peotrySync, getPeotryInfo, getPeotryLastId, getPeotryList } from '@/api/peotry'
 import { dateFormat } from '@/utils/date'
 import md5 from 'md5'
 export default {
@@ -77,7 +77,7 @@ export default {
   },
 
   created() {
-    this.getZuowenList()
+    this.getPeotryList()
   },
 
   destroyed() {
@@ -93,13 +93,13 @@ export default {
       this.play = !this.play
       clearTimeout(this.timeout)
       if (this.play) {
-        this.getZuowenLastId()
+        this.getPeotryLastId()
       }
     },
 
-    getZuowenList() {
+    getPeotryList() {
       this.loading = true
-      getZuowenList({
+      getPeotryList({
         page: this.page,
         limit: this.limit
       })
@@ -113,30 +113,31 @@ export default {
         })
     },
 
-    getZuowenLastId() {
+    getPeotryLastId() {
       if (!this.play) return
-      getZuowenLastId().then((res) => {
+      getPeotryLastId().then((res) => {
+        res.data = res.data == 0 ? 9999 : res.data
         this.start = true
-        this.forEachZuowen(res.data + 1)
+        this.forEachPeotry(res.data + 1)
       })
     },
 
-    forEachZuowen(id) {
+    forEachPeotry(id) {
       for (let i = id; i < id + 20; i++) {
         this.request({
-          zuoWenId: i
+          shiId: i
         })
       }
 
-      this.getZuowenList()
+      this.getPeotryList()
       this.timeout = setTimeout(() => {
-        this.getZuowenLastId()
+        this.getPeotryLastId()
       }, 3000)
     },
 
     async syncData(data) {
       try {
-        await zuowenSync({}, data)
+        await peotrySync({}, data)
         this.succ++
         if (this.succ + this.error >= 20) {
           this.start = false
@@ -180,21 +181,35 @@ export default {
         o.hasOwnProperty(c) && ((a = o[c]), s.push(c + '=' + a))
       }
 
-      const res = await getZuowenInfo(null, o)
+      const res = await getPeotryInfo(null, o)
       if (res.code === 1) {
         const e = res.data
+        const noteList = res.data.noteList
         const data = {
-          comments: e.comment,
-          genre: e.genre,
-          grade: e.grade,
-          zuowen_id: e.id,
-          quality: e.quality,
-          read_count: e.readCount,
-          theme: e.theme,
+          peotry_id: e.id,
+          align: e.align,
+          appreciate: e.appreciate,
+          author: e.author,
+          author_more: e.authorMore,
+          du_yin: e.duYin,
+          org_text: e.orgText,
+          reason: e.reason,
           title: e.title,
-          word_number: e.wordNumber,
-          zw_content: e.zwContent
+          translation: e.translation,
+          video: e.video,
+          years: e.years,
+          note_list: []
         }
+
+        noteList &&
+          noteList.forEach((item, index) => {
+            data.note_list[index] = {
+              ciyu: item.ciyu,
+              notes: item.notes,
+              peotry_id: e.id
+            }
+          })
+
         await this.syncData(data)
       }
     }

@@ -99,6 +99,19 @@ export const constantRoutes = [
     ]
   },
   {
+    path: '/peotry',
+    component: Layout,
+    redirect: '/peotry/index',
+    children: [
+      {
+        path: 'index',
+        component: () => import('@/views/peotry/index'),
+        name: 'peotry',
+        meta: { title: '诗词管理', icon: 'el-icon-school', noCache: true }
+      }
+    ]
+  },
+  {
     path: '/guide',
     component: Layout,
     redirect: '/guide/index',
