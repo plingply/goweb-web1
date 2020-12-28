@@ -1,38 +1,30 @@
 {
-    "files.associations": {
-      "*.cjson": "jsonc",
-      "*.wxss": "css",
-      "*.wxs": "javascript",
-      "*.ttml": "xml",
-      "*.ttss": "css"
-    },
-    "go.inferGopath": false,
-    "files.eol": "\n",
-    "editor.tabSize": 2,
-    "editor.formatOnSave": true,
-    "editor.defaultFormatter": "esbenp.prettier-vscode",
-    "eslint.validate": [
-      "javascript",
-      "javascriptreact",
-      "vue",
-      "typescript",
-      "typescriptreact"
-    ],
-    "editor.codeActionsOnSave": {
-      "source.fixAll.eslint": true
-    },
-    "vetur.format.options.tabSize": 2,
-    "vetur.format.defaultFormatter.html": "prettyhtml",
-    "vetur.format.defaultFormatter.css": "prettier",
-    "vetur.format.defaultFormatter.postcss": "prettier",
-    "vetur.format.defaultFormatter.scss": "prettier",
-    "vetur.format.defaultFormatter.less": "prettier",
-    "vetur.format.defaultFormatter.stylus": "stylus-supremacy",
-    "vetur.format.defaultFormatter.js": "prettier",
-    "vetur.format.defaultFormatter.ts": "prettier",
-    "vetur.format.defaultFormatter.sass": "sass-formatter",
-    "[vue]": {
-      "editor.defaultFormatter": "octref.vetur"
-    },
-    "vetur.validation.template": false
-  }
+  "files.associations": {
+    "*.cjson": "jsonc",
+    "*.wxss": "css",
+    "*.wxs": "javascript",
+    "*.ttml": "xml",
+    "*.ttss": "css"
+  },
+  "go.inferGopath": false,
+  "files.eol": "\n",
+  "editor.tabSize": 2,
+  "editor.formatOnSave": true,
+  "editor.defaultFormatter": "esbenp.prettier-vscode",
+  "eslint.validate": ["javascript", "javascriptreact", "vue", "typescript", "typescriptreact"],
+  "editor.codeActionsOnSave": {
+    "source.fixAll.eslint": true
+  },
+  "vetur.format.options.tabSize": 2,
+  "vetur.format.defaultFormatter.html": "prettyhtml",
+  "vetur.format.defaultFormatter.css": "prettier",
+  "vetur.format.defaultFormatter.postcss": "prettier",
+  "vetur.format.defaultFormatter.stylus": "stylus-supremacy",
+  "vetur.format.defaultFormatter.js": "prettier",
+  "vetur.format.defaultFormatter.ts": "prettier",
+  "vetur.format.defaultFormatter.sass": "sass-formatter",
+  "[vue]": {
+    "editor.defaultFormatter": "octref.vetur"
+  },
+  "vetur.validation.template": false
+}

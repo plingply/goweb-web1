@@ -53,3 +53,21 @@ export function getClassInfo(params, data) {
     data
   })
 }
+
+export function createClassMember(params, data) {
+  return request({
+    url: '/api/class/member/create',
+    method: 'post',
+    params,
+    data
+  })
+}
+
+export function leaveClassMember(params, data) {
+  return request({
+    url: '/api/class/member/leave',
+    method: 'post',
+    params,
+    data
+  })
+}

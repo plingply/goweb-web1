@@ -67,3 +67,31 @@ export function toThousandFilter(num) {
 export function uppercaseFirst(string) {
   return string.charAt(0).toUpperCase() + string.slice(1)
 }
+
+export function weekUnit(v) {
+  let result = ''
+  switch (v) {
+    case 1:
+      result = '周一'
+      break
+    case 2:
+      result = '周二'
+      break
+    case 3:
+      result = '周三'
+      break
+    case 4:
+      result = '周四'
+      break
+    case 5:
+      result = '周五'
+      break
+    case 6:
+      result = '周六'
+      break
+    case 7:
+      result = '周日'
+      break
+  }
+  return result
+}

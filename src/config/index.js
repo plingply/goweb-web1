@@ -35,7 +35,13 @@ export const classMemberStatus = {
   '2': '离班'
 }
 
-export const courseStatus = {
+export const courseType = {
   '1': '班课',
   '2': '学员课'
+}
+
+export const courseStatus = {
+  '1': '未上课',
+  '2': '上课中',
+  '3': '已下课'
 }

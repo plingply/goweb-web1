@@ -16,6 +16,7 @@
     >
       <template slot="operation" slot-scope="{ row }">
         <el-button type="text" @click="openAddStudent(true, '编辑学生', row)">编辑</el-button>
+        <el-button type="text" @click="openAddClassMember(row)">学员入班</el-button>
         <el-button class="btn-delete" type="text">删除</el-button>
       </template>
     </common-table>
@@ -26,6 +27,8 @@
       :student-info="studentInfo"
       @callback="studentCallback"
     />
+
+    <add-member :show.sync="showAddMember" :student_id="studentInfo.id" member_type="1"></add-member>
   </page>
 </template>
 
@@ -33,11 +36,13 @@
 import { getStudentList } from '@/api/student'
 import { dateFormat } from '@/utils/date'
 import addStudent from './compontents/add-student'
+import addMember from '../class/compontents/add-member'
 import { sexObj, studentStatus } from '@/config/index'
 
 export default {
   components: {
-    addStudent
+    addStudent,
+    addMember
   },
   data() {
     return {
@@ -83,6 +88,7 @@ export default {
       limit: 10,
 
       showAddStudent: false,
+      showAddMember: false,
       title: '',
       studentInfo: {}
     }
@@ -100,6 +106,11 @@ export default {
     openAddStudent(bool, title, studentInfo) {
       this.showAddStudent = bool
       this.title = title
+      this.studentInfo = studentInfo
+    },
+
+    openAddClassMember(studentInfo) {
+      this.showAddMember = true
       this.studentInfo = studentInfo
     },
 

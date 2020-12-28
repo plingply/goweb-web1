@@ -9,6 +9,13 @@
     :size-num.sync="limit"
     @callback="getCourseList"
   >
+    <template v-slot="{ column, row }">
+      <template v-if="column.prop == 'status'">
+        <el-tag v-if="row.status == '1'" type="warning">未上课</el-tag>
+        <el-tag v-if="row.status == '2'" type="success">上课中</el-tag>
+        <el-tag v-if="row.status == '3'" type="danger">已下课</el-tag>
+      </template>
+    </template>
     <template slot="operation">
       <el-button class="btn-delete" type="text">删除</el-button>
     </template>
@@ -18,7 +25,7 @@
 <script>
 import { getCourseList } from '@/api/course'
 import { dateFormat, weekFormat } from '@/utils/date'
-import { courseStatus } from '@/config/index'
+import { courseType, courseStatus } from '@/config/index'
 export default {
   data() {
     return {
@@ -35,6 +42,13 @@ export default {
         {
           prop: 'course_type',
           label: '课程类型',
+          formatter(row, column, value) {
+            return courseType[value]
+          }
+        },
+        {
+          prop: 'status',
+          label: '课程状态',
           formatter(row, column, value) {
             return courseStatus[value]
           }

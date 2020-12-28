@@ -11,6 +11,12 @@ export default {
   },
   children: [
     {
+      path: 'course/table',
+      component: () => import('@/views/edu/course-table/index.vue'),
+      name: 'course-table',
+      meta: { title: '排课表' }
+    },
+    {
       path: 'class',
       component: () => import('@/views/edu/class/index'),
       name: 'class',

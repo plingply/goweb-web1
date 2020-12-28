@@ -1,14 +1,14 @@
 <!--
  * @Author: 彭林
  * @Date: 2020-12-14 10:41:13
- * @LastEditTime: 2020-12-14 10:51:13
+ * @LastEditTime: 2020-12-28 15:22:13
  * @LastEditors: 彭林
  * @Description: 空数据
- * @FilePath: /eduplus_web/src/components/empty-data/index.vue
+ * @FilePath: /goweb-web1/src/components/empty-data/index.vue
 -->
 <template>
   <div class="empty" :style="{ height: emptyHeight }">
-    <img src="https://web.imeduplus.com/img/empty.8af13181.png" alt="">
+    <img src="../../assets/img/empty.png" alt />
     <span style="line-height:40px">暂无数据</span>
   </div>
 </template>
@@ -18,7 +18,7 @@ export default {
   props: {
     emptyHeight: {
       type: String,
-      default: "500px"
+      default: '500px'
     }
   }
 }

@@ -13,6 +13,12 @@ body {
   font-family: Helvetica Neue, Helvetica, PingFang SC, Hiragino Sans GB, Microsoft YaHei, Arial, sans-serif;
 }
 
+h1,
+p {
+  padding: 0;
+  margin: 0;
+}
+
 label {
   font-weight: 700;
 }
@@ -146,13 +152,11 @@ aside {
   text-align: right;
   padding-right: 20px;
   transition: 600ms ease position;
-  background: linear-gradient(
-    90deg,
-    rgba(32, 182, 249, 1) 0%,
-    rgba(32, 182, 249, 1) 0%,
-    rgba(33, 120, 241, 1) 100%,
-    rgba(33, 120, 241, 1) 100%
-  );
+  background: linear-gradient(90deg,
+      rgba(32, 182, 249, 1) 0%,
+      rgba(32, 182, 249, 1) 0%,
+      rgba(33, 120, 241, 1) 100%,
+      rgba(33, 120, 241, 1) 100%);
 
   .subtitle {
     font-size: 20px;
@@ -200,7 +204,8 @@ aside {
 .search-box {
   display: flex;
   margin-bottom: 12px;
-  > * {
+
+  >* {
     margin-right: 12px;
     margin-bottom: 12px;
   }

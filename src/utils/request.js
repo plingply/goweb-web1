@@ -11,8 +11,6 @@ const service = axios.create({
 
 service.interceptors.request.use(
   config => {
-    console.log('req:', config)
-
     if (config.url.indexOf('api.xhzapp.com') === -1) {
       if (store.getters.token) {
         config.headers['token'] = getToken()
@@ -29,8 +27,6 @@ service.interceptors.request.use(
 service.interceptors.response.use(
   response => {
     const res = response.data
-    console.log('response:', response)
-
     if (response.request.responseURL.indexOf('api.xhzapp.com') > -1) {
       return res
     }

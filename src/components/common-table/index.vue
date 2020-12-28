@@ -36,9 +36,13 @@
           <slot name="header" :column="item">{{ item.label }}</slot>
         </template>
         <template slot-scope="scope">
-          <slot :column="item" :prop="item.prop" :row="scope.row" :scope="scope" :value="scope.row[item.prop]">{{
-            renderCell(scope, item)
-          }}</slot>
+          <slot
+            :column="item"
+            :prop="item.prop"
+            :row="scope.row"
+            :scope="scope"
+            :value="scope.row[item.prop]"
+          >{{ renderCell(scope, item) }}</slot>
         </template>
       </el-table-column>
 
@@ -160,6 +164,9 @@ export default {
         return row[prop]
       }
     },
+
+    filterHandler() {},
+
     renderCell(scope, column) {
       const value = this.formatValue(scope.row, column.prop)
       if (column && column.formatter) {
