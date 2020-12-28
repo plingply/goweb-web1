@@ -1,0 +1,78 @@
+.formbox {
+  width: 100%;
+  margin: 0 auto;
+}
+
+.tablebox {
+  height: 392px;
+  overflow: hidden;
+  overflow-y: auto;
+}
+
+.tishi {
+  font-size: 12px;
+  color: $main;
+  line-height: 36px;
+}
+
+.c_c {
+  font-size: 12px;
+  color: $main;
+  line-height: 1;
+  padding-top: 8px;
+}
+
+.bg_student {
+  margin-top: 18px;
+}
+
+.keciend {
+  padding-top: 8px;
+
+  > span {
+    padding-left: 16px;
+  }
+}
+
+.tixing {
+  width: 400px;
+  margin: 0 auto;
+  padding-top: 100px;
+
+  > div {
+    margin-bottom: 16px;
+
+    span {
+      font-size: 14px;
+      color: $text_c6;
+      margin-right: 16px;
+      margin-bottom: 8px;
+    }
+  }
+
+  .tishi1 {
+    font-size: 14px;
+    color: $main;
+    margin-bottom: 16px;
+  }
+
+  .paikeinfo {
+    font-size: 14px;
+    color: $text_c3;
+
+    .active {
+      color: $main;
+      margin-right: 8px;
+    }
+  }
+}
+
+.chongtu {
+  color: $main;
+}
+
+.dialog-footer {
+  display: block;
+  text-align: right;
+  padding-top: 24px;
+}
