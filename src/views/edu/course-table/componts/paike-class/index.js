@@ -700,7 +700,7 @@ export default {
       const start_time_arr = []
       // 所有时间
       let alltime = []
-      const oneday = 60 * 60 * 24
+      const oneday = 60 * 60 * 24 * 1000
 
       // 获取开始日期数组
       this.weekgrounp.forEach(item => {
