@@ -1,29 +1,28 @@
 <template>
-  <el-dialog title="调整班课" :visible.sync="show" width="600px">
+  <el-dialog title="调整班课" :visible.sync="visible" width="600px" @open="onOpen">
     <div v-loading="loading" class="pk_content">
       <div class="formbox">
         <el-form ref="form" :model="form" label-width="170px">
           <el-form-item label="班级" class="require">
             <el-select
-              v-model="form.class"
+              v-model="form.class_id"
               style="width: 272px"
               size="medium"
               placeholder="请选择班级"
               filterable
               disabled
-              @change="classChange"
             >
               <el-option
                 v-for="(item, index) in classList"
                 :key="index"
-                :label="item.name"
+                :label="item.class_name"
                 :value="item.id"
               ></el-option>
             </el-select>
           </el-form-item>
           <el-form-item label="课程" class="require">
             <el-select
-              v-model="form.subject"
+              v-model="form.subject_id"
               style="width: 272px"
               size="medium"
               placeholder="请选择课程"
@@ -31,16 +30,16 @@
               disabled
             >
               <el-option
-                v-for="(item, index) in subjectlist"
+                v-for="(item, index) in subjectList"
                 :key="index"
-                :label="item.name"
+                :label="item.subject_name"
                 :value="item.id"
               ></el-option>
             </el-select>
           </el-form-item>
           <el-form-item label="授课老师" class="require">
             <el-select
-              v-model="form.teacher"
+              v-model="form.teacher_id"
               style="width: 272px"
               size="medium"
               placeholder="请选择授课老师"
@@ -49,8 +48,8 @@
               <el-option
                 v-for="(item, index) in teacherList"
                 :key="index"
-                :label="item.user_remark"
-                :value="item.user_id"
+                :label="item.teacher_name"
+                :value="item.id"
               ></el-option>
             </el-select>
           </el-form-item>
@@ -73,36 +72,24 @@
           </el-form-item>
           <el-form-item label="上课时长" class="require">
             <el-input
-              v-model="form.sc"
+              v-model="form.len"
               style="width: 150px"
               size="medium"
               placeholder="上课时长(分钟)"
               maxlength="5"
               @input="scInput"
-            ></el-input>&nbsp;分钟
+            ></el-input
+            >&nbsp;分钟
           </el-form-item>
           <el-form-item label="教室">
-            <el-select
-              v-model="form.classroom"
-              style="width: 272px"
-              size="medium"
-              placeholder="请选择教室"
-              filterable
-            >
+            <el-select v-model="form.classroom" style="width: 272px" size="medium" placeholder="请选择教室" filterable>
               <el-option
-                v-for="(item, index) in classroomlist"
+                v-for="(item, index) in classroomList"
                 :key="index"
-                :label="item.name"
+                :label="item.classroom_name"
                 :value="item.id"
               ></el-option>
             </el-select>
-          </el-form-item>
-
-          <el-form-item label="课前通知">
-            <el-radio-group v-model="form.is_notice">
-              <el-radio label="1">通知</el-radio>
-              <el-radio label="2">不通知</el-radio>
-            </el-radio-group>
           </el-form-item>
 
           <el-form-item label="备注">
@@ -115,15 +102,12 @@
               maxlength="200"
               rows="3"
             ></el-input>
-            <el-checkbox v-model="form.update_notice">
-              <span class="c2">发送调课通知</span>
-            </el-checkbox>
           </el-form-item>
         </el-form>
       </div>
     </div>
     <span slot="footer" class="dialog-footer">
-      <el-button @click="show = false">取 消</el-button>
+      <el-button @click="visible = false">取 消</el-button>
       <el-button v-if="!pkdata.ctid" type="primary" @click="quedingfun">确 定</el-button>
       <el-button v-if="pkdata.ctid" type="primary" @click="updatefunc">确 定</el-button>
     </span>
@@ -132,71 +116,68 @@
 
 <script>
 export default {
-  props: ['showtime', 'pkdata', 'classroomlist', 'teacherList', 'classList'],
+  props: {
+    show: {
+      type: Boolean,
+      default: false
+    },
+    classList: {
+      type: Array,
+      default: () => []
+    },
+    subjectList: {
+      type: Array,
+      default: () => []
+    },
+    teacherList: {
+      type: Array,
+      default: () => []
+    },
+    classroomList: {
+      type: Array,
+      default: () => []
+    },
+    pkdata: {
+      type: Object,
+      default: () => {}
+    }
+  },
   data() {
     return {
-      show: false,
       loading: false,
-      form: {
-        class: '',
-        subject: '',
-        teacher: '',
-        start_time: '',
-        time: '',
-        sc: '',
-        classroom: '',
-        note: '',
-        is_notice: '',
-        update_notice: true
-      },
-
-      subjectlist: [],
-
       hours_time: '',
-
       pickerOptions_1: {
-        // disabledDate(time) {
-        //   return time.getTime() < Date.now() - 1000 * 3600 * 24;
-        // },
         firstDayOfWeek: 1
       }
     }
   },
 
-  watch: {
-    showtime() {
-      console.log('pkdata=>', this.pkdata)
-      // ctid
-      this.show = true
-      this.form.class = this.pkdata.grade_id
-      this.form.subject = this.pkdata.course_id
-      this.form.start_time = new Date(this.pkdata.start_time * 1000)
-      this.form.time = new Date(this.pkdata.start_time * 1000)
-      this.form.sc = this.pkdata.len
-      this.form.is_notice = this.pkdata.is_notice
-      this.form.update_notice = true
-      this.form.classroom = this.pkdata.classroom_id == '0' ? '' : this.pkdata.classroom_id
-      this.form.note = this.pkdata.note
-      if (this.pkdata.ctid) {
-        this.form.teacher = this.pkdata.teacher_id
-      } else {
-        this.form.teacher = this.pkdata.teacher_ids
+  computed: {
+    visible: {
+      get() {
+        return this.show
+      },
+      set() {
+        this.$emit('update:show', false)
       }
+    },
 
-      this.classChange(this.form.class)
+    form: {
+      get() {
+        return this.pkdata
+      },
+      set() {
+        this.$emit('update:pkdata', this.pkdata)
+      }
     }
   },
 
   methods: {
-    scInput() {},
-
-    classChange(id) {
-      this.classList.map((item) => {
-        if (item.id == id) {
-          this.subjectlist = item.course_list
-        }
-      })
+    onOpen() {
+      console.log(this.form)
     },
+
+    scInput() {},
 
     updatefunc(type) {
       if (!this.verification()) return
@@ -219,14 +200,14 @@ export default {
         update_notice: this.form.update_notice ? '1' : '2'
       }
 
-      this._NET.jw_paike_update(data, true).then((res) => {
+      this._NET.jw_paike_update(data, true).then(res => {
         if (res.status == 'ok') {
           this._alert({
             type: 'success',
             msg: '修改成功'
           })
 
-          this.show = false
+          this.visible = false
           this.$emit('callback')
         } else {
           // 冲突
@@ -267,7 +248,7 @@ export default {
         is_notice: this.form.is_notice
       }
       this.$emit('callback', data)
-      this.show = false
+      this.visible = false
     },
 
     verification() {

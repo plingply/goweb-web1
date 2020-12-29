@@ -38,6 +38,11 @@ export default {
   },
 
   methods: {
+    paikeCallback() {
+      this.paikeClassShow = false
+      this.$refs[this.type].weekandmonthFun()
+    },
+
     initCalendar(obj) {
       this.calendarList = obj
     },

@@ -5,6 +5,7 @@
       :close-on-press-escape="false"
       :close-on-click-modal="false"
       :visible.sync="visible"
+      @open="onOpen"
       width="800px"
     >
       <div v-loading="loading" class="pk_content" :element-loading-text="paikeText">
@@ -23,7 +24,7 @@
                   >
                     <el-option
                       v-for="(item, index) in classList"
-                      :key="'1c_'+index"
+                      :key="'1c_' + index"
                       :label="item.class_name"
                       :value="item.id"
                     ></el-option>
@@ -32,16 +33,10 @@
               </el-col>
               <el-col :span="12">
                 <el-form-item label="课程" class="require">
-                  <el-select
-                    v-model="subject_id"
-                    style="width: 100%"
-                    size="medium"
-                    placeholder="请选择课程"
-                    filterable
-                  >
+                  <el-select v-model="subject_id" style="width: 100%" size="medium" placeholder="请选择课程" filterable>
                     <el-option
                       v-for="item in subjectList"
-                      :key="'2x_'+item.id"
+                      :key="'2x_' + item.id"
                       :label="item.subject_name"
                       :value="item.id"
                     ></el-option>
@@ -63,7 +58,7 @@
                   >
                     <el-option
                       v-for="(item, index) in teacherList"
-                      :key="'3t_'+index"
+                      :key="'3t_' + index"
                       :label="item.teacher_name"
                       :value="item.id"
                     ></el-option>
@@ -115,8 +110,8 @@
                     filterable
                   >
                     <el-option
-                      v-for="(item, index) in classroomlist"
-                      :key="'4m_'+index"
+                      v-for="(item, index) in classroomList"
+                      :key="'4m_' + index"
                       :label="item.name"
                       :value="item.id"
                     ></el-option>
@@ -127,12 +122,7 @@
             <el-row :gutter="20">
               <el-col :span="12">
                 <el-form-item style="margin-bottom: 0px" label="重复" class="require">
-                  <el-select
-                    v-model="pk_repeat"
-                    style="width: 100%"
-                    size="medium"
-                    @change="pk_repeat_change"
-                  >
+                  <el-select v-model="pk_repeat" style="width: 100%" size="medium" @change="pk_repeat_change">
                     <el-option label="单次" value="1"></el-option>
                     <el-option label="每周循环" value="2"></el-option>
                     <el-option label="隔周循环" value="3"></el-option>
@@ -145,11 +135,9 @@
             <div v-if="pk_repeat != '1'" class="bg_student">
               <el-form-item label="循环周期" class="require">
                 <el-checkbox-group v-model="weekgrounp" @change="weekgrounpChange">
-                  <el-checkbox-button
-                    v-for="item in weeklist"
-                    :key="'5w_'+item.value"
-                    :label="item.value"
-                  >{{ item.text }}</el-checkbox-button>
+                  <el-checkbox-button v-for="item in weeklist" :key="'5w_' + item.value" :label="item.value">{{
+                    item.text
+                  }}</el-checkbox-button>
                 </el-checkbox-group>
               </el-form-item>
               <el-form-item label="课次截止" class="require">
@@ -164,7 +152,8 @@
                     :disabled="!start_time || weekgrounp.length == 0"
                     style="width: 70px"
                     @input="kcInput"
-                  ></el-input>&nbsp;次课程
+                  ></el-input
+                  >&nbsp;次课程
                   <span>结束日期：{{ end_time | dateFormat('YYYY-MM-DD HH:MM') }}</span>
                 </div>
                 <div v-if="endtype == '2'" class="keciend">
@@ -212,13 +201,9 @@
           <el-table :data="waitArr" style="width: 100%">
             <el-table-column prop="class_id" label="班级">
               <template slot-scope="scope">
-                <div
-                  v-for="(item, index) in classList"
-                  v-show="item.id == scope.row.class_id"
-                  :key="'6cl_'+index"
-                >
+                <div v-for="(item, index) in classList" v-show="item.id == scope.row.class_id" :key="'6cl_' + index">
                   {{ item.class_name }}
-                  <span v-if="scope.row.class_ct" class="chongtu">[冲突]</span>
+                  <span v-if="scope.row.conflict == 'class'" class="chongtu">[冲突]</span>
                 </div>
               </template>
             </el-table-column>
@@ -227,32 +212,29 @@
                 <div
                   v-for="(item, index) in teacherList"
                   v-show="item.id == scope.row.teacher_id"
-                  :key="'7tl_'+index"
+                  :key="'7tl_' + index"
                 >
                   {{ item.teacher_name }}
-                  <span v-if="scope.row.teacher_ct" class="chongtu">[冲突]</span>
+                  <span v-if="scope.row.conflict == 'teacher'" class="chongtu">[冲突]</span>
                 </div>
               </template>
             </el-table-column>
             <el-table-column prop="classroom_id" label="教室">
               <template slot-scope="scope">
                 <div
-                  v-for="(item, index) in classroomlist"
+                  v-for="(item, index) in classroomList"
                   v-show="item.id == scope.row.classroom_id"
-                  :key="'8cls_'+index"
+                  :key="'8cls_' + index"
                 >
                   {{ item.name }}
-                  <span v-if="scope.row.classroom_ct" class="chongtu">[冲突]</span>
+                  <span v-if="scope.row.conflict == 'classroom'" class="chongtu">[冲突]</span>
                 </div>
               </template>
             </el-table-column>
             <el-table-column prop="start_time" label="上课时间" width="150">
               <template slot-scope="scope">
                 {{ scope.row.start_time | dateFormat('YYYY-MM-DD hh:mm') }}
-                <span
-                  v-if="scope.row.start_time < currentTime"
-                  class="chongtu"
-                >[补排]</span>
+                <span v-if="scope.row.start_time < currentTime" class="chongtu">[补排]</span>
               </template>
             </el-table-column>
             <el-table-column prop="date" label="操作">
@@ -266,29 +248,29 @@
 
         <div v-show="step == '3'" class="tablebox">
           <div class="tixing">
-            <div v-for="item in subjectList" :key="'9k_'+item.id">
+            <div v-for="item in subjectList" :key="'9k_' + item.id">
               <span v-if="subject_id == item.id">课程：{{ item.subject_name }}</span>
             </div>
-            <div v-for="item in classList" :key="'10k_'+item.id">
+            <div v-for="item in classList" :key="'10k_' + item.id">
               <span v-if="class_id == item.id">班级：{{ item.name }}</span>
             </div>
-            <div v-for="item in teacherList" :key="'11k_'+item.id">
+            <div v-for="item in teacherList" :key="'11k_' + item.id">
               <span v-if="teacher_id == item.id">授课老师：{{ item.teacher_name }}</span>
             </div>
-            <div v-for="item in classroomlist" :key="'12k_'+item.id">
+            <div v-for="item in classroomList" :key="'12k_' + item.id">
               <span v-if="classroom_id == item.id">教室：{{ item.name }}</span>
             </div>
             <div v-if="start_time && sk_time">
-              <span>上课时间：{{ parseInt(start_time.getTime()) | dateFormat('YYYY-MM-DD') }}&nbsp;{{ parseInt(sk_time.getTime()) | dateFormat('hh:mm') }}</span>
+              <span
+                >上课时间：{{ parseInt(start_time.getTime()) | dateFormat('YYYY-MM-DD') }}&nbsp;{{
+                  parseInt(sk_time.getTime()) | dateFormat('hh:mm')
+                }}</span
+              >
             </div>
             <p class="tishi1">新建的排课存在冲突</p>
             <p class="paikeinfo">
               冲突的排课信息：
-              <span
-                v-for="(item, index) in checkCodeList"
-                :key="'13ct_'+index"
-                class="active"
-              >{{ item.msg }}</span>
+              <span v-for="(item, index) in checkCodeList" :key="'13ct_' + index" class="active">{{ item.msg }}</span>
             </p>
           </div>
         </div>
@@ -297,18 +279,12 @@
           <el-button v-if="step == '1'" @click="visible = false">取 消</el-button>
           <el-button v-if="step == '1'" type="primary" :loading="xloading" @click="nextFunc">确 定</el-button>
           <el-button v-if="step == '2'" @click="backstep('1')">返回修改</el-button>
-          <el-button
-            v-if="step == '2' && chongtu"
-            type="primary"
-            :loading="xloading"
-            @click="addfunc"
-          >仍然创建</el-button>
-          <el-button
-            v-if="step == '2' && !chongtu"
-            type="primary"
-            :loading="xloading"
-            @click="addfunc"
-          >确认添加</el-button>
+          <el-button v-if="step == '2' && chongtu" type="primary" :loading="xloading" @click="addfunc"
+            >仍然创建</el-button
+          >
+          <el-button v-if="step == '2' && !chongtu" type="primary" :loading="xloading" @click="addfunc"
+            >确认添加</el-button
+          >
           <el-button v-if="step == '3'" @click="backstep('1')">返回修改</el-button>
           <el-button v-if="step == '3'" type="primary" :loading="xloading" @click="singlePaike">仍然创建</el-button>
         </span>
@@ -316,11 +292,11 @@
     </el-dialog>
 
     <paike-editor
-      :showtime="edshow"
-      :pkdata="pkdata"
+      :show.sync="edshow"
+      :pkdata.sync="pkdata"
       :class-list="classList"
       :teacher-list="teacherList"
-      :classroomlist="classroomlist"
+      :classroom-list="classroomList"
       @callback="edtcallback"
     ></paike-editor>
   </div>

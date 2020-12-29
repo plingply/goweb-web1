@@ -26,3 +26,12 @@ export function checkPaikeConflict(params, data) {
     data
   })
 }
+
+export function paikeAdd(params, data) {
+  return request({
+    url: '/api/course/add',
+    method: 'post',
+    params,
+    data
+  })
+}

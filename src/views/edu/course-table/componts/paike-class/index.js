@@ -1,5 +1,5 @@
 import paikeEditor from '../paike-editor/index'
-import { checkPaikeConflict } from '@/api/course'
+import { checkPaikeConflict, paikeAdd } from '@/api/course'
 export default {
   props: {
     show: {
@@ -18,7 +18,7 @@ export default {
       type: Array,
       default: () => []
     },
-    classroomlist: {
+    classroomList: {
       type: Array,
       default: () => []
     }
@@ -34,7 +34,7 @@ export default {
       /**
        * 编辑相关
        */
-      edshow: 0,
+      edshow: false,
       pkdata: {},
       edtindex: 0,
 
@@ -134,21 +134,13 @@ export default {
     }
   },
 
-  watch: {
-    showtime() {
-      this.step = '1'
-      this.show = true
-      this.startChange()
-    }
-  },
-
   computed: {
     visible: {
       get() {
         return this.show
       },
       set(v) {
-        this.$emit('update:show', v)
+        this.$emit('update:show', false)
       }
     }
   },
@@ -158,15 +150,19 @@ export default {
   },
 
   created() {
-    this.currentTime = parseInt(new Date().getTime())
+    this.currentTime = new Date().getTime()
   },
 
   methods: {
+    onOpen() {
+      this.step = '1'
+      this.startChange()
+    },
     // 检查全局是否存在冲突
     checkchongtu() {
       this.chongtu = false
-      this.waitArr.map((item, index) => {
-        if (item.classroom_ct || item.teacher_ct || item.class_ct) {
+      this.waitArr.map(item => {
+        if (item.conflict) {
           this.chongtu = true
         }
       })
@@ -265,15 +261,15 @@ export default {
           if ((start < s && end > s) || (start >= s && start < e)) {
             // 冲突
             if (curent.class_id == item.class_id) {
-              item.class_ct = true
+              item.conflict = 'class'
             }
 
             if (curent.classroom_id && curent.classroom_id == item.classroom_id) {
-              item.classroom_ct = true
+              item.conflict = 'classroom'
             }
 
             if (curent.teacher_id == item.teacher_id) {
-              item.teacher_ct = true
+              item.conflict = 'teacher'
             }
           }
         }
@@ -284,7 +280,7 @@ export default {
     editorfunc(obj, index) {
       this.pkdata = obj
       this.edtindex = index
-      this.edshow = Date.now()
+      this.edshow = true
     },
 
     // 修改排课回调
@@ -370,43 +366,16 @@ export default {
             start_time: item.start_time,
             len: item.len,
             classroom_id: item.classroom_id,
-            type: 1
+            type: 1,
+            note: this.note
           })
         })
         this.paikeCheck(list)
           .then(res => {
             this.loading = false
-            if (res.status == 'ok') {
-              this.step = '2'
-              this.checkchongtu()
-            } else {
-              // 0:正常,1000:教室冲突1001:年级冲突1002:老师冲突
-              if (res.code == 1000) {
-                this.waitArr.forEach((item, index) => {
-                  if (res.data[item.start_time]) {
-                    res.data[item.start_time].forEach(list => {
-                      if (list.code == 1000) {
-                        this.waitArr[index].classroom_ct = true
-                      }
-                      if (list.code == 1001) {
-                        this.waitArr[index].class_ct = true
-                      }
-                      if (list.code == 1002) {
-                        this.waitArr[index].teacher_ct = true
-                      }
-                    })
-                  }
-                })
-
-                this.step = '2'
-                this.checkchongtu()
-              } else {
-                this.$message({
-                  type: 'warning',
-                  message: res.message
-                })
-              }
-            }
+            this.step = '2'
+            this.waitArr = res.data
+            this.checkchongtu()
           })
           .catch(() => {
             this.loading = false
@@ -446,70 +415,28 @@ export default {
           start_time: parseInt(this.start_time.setHours(0, 0, 0) + this.hours_time),
           len: this.time_len,
           classroom_id: this.classroom_id,
-          type: 1
+          type: 1,
+          note: this.note
         }
       ]
 
-      this.paikeCheck({ pklist: list })
+      this.paikeCheck(list)
         .then(res => {
           this.loading = false
-          if (res.status == 'ok') {
-            this.singlePaike()
-          } else {
-            if (res.code == 1000) {
-              // this.checkCodeList = res.data[result.start_time]
-              this.step = '3'
-            } else {
-              this.$message({
-                type: 'warning',
-                message: res.message
+          const check = res.data[0].conflict
+          this.waitArr = res.data
+          if (check) {
+            this.$confirm(`排课${check}冲突，是否继续?`, '提示', {
+              confirmButtonText: '确定',
+              cancelButtonText: '取消',
+              type: 'warning'
+            })
+              .then(() => {
+                this.addfunc()
               })
-            }
-          }
-        })
-        .catch(() => {
-          this.loading = false
-        })
-    },
-
-    singlePaike() {
-      const result = {}
-      const list = [
-        {
-          start_time: parseInt(this.start_time.setHours(0, 0, 0) + this.hours_time),
-          len: this.time_len,
-          teacher_id: this.teacher_id,
-          classroom_id: this.classroom_id
-        }
-      ]
-
-      result.school_id = this.school_id
-      result.campus_id = this.campus_id
-      result.class_id = this.class_id
-      result.course_id = this.subject_id
-      result.ignore_conflict = 1
-      result.type = 1
-      result.coursetable_list = JSON.stringify(list)
-      result.note = this.note
-
-      this.paikeText = `排课中...`
-      this.loading = true
-      this.paikeAdd(result)
-        .then(res => {
-          this.loading = false
-          if (res.status == 'ok') {
-            this.show = false
-            this.$message({
-              type: 'success',
-              message: '添加成功'
-            })
-            this.$emit('callback')
-            this.initForm()
+              .catch(() => {})
           } else {
-            this.$message({
-              type: 'warning',
-              message: res.message
-            })
+            this.addfunc()
           }
         })
         .catch(() => {
@@ -530,45 +457,18 @@ export default {
       this.paikeText = `排课中...`
       this.succStep = 0
 
-      const result = []
-      const publicObj = this.waitArr[0]
-      const list = []
-
-      this.waitArr.map((item, index) => {
-        list.push({
-          start_time: item.start_time,
-          len: item.len,
-          teacher_id: item.teacher_id,
-          classroom_id: item.classroom_id
-        })
-      })
-
-      result.school_id = publicObj.school_id
-      result.campus_id = publicObj.campus_id
-      result.class_id = publicObj.class_id
-      result.course_id = publicObj.course_id
-      result.ignore_conflict = 1
-      result.type = 1
-      result.coursetable_list = JSON.stringify(list)
-      result.note = this.note
-
-      this.paikeAdd(result)
+      paikeAdd({}, this.waitArr)
         .then(res => {
           this.loading = false
-          if (res.status == 'ok') {
-            this.show = false
+          this.visible = false
+          setTimeout(() => {
             this.$emit('callback')
-            this.$message({
-              type: 'success',
-              message: '排课成功'
-            })
-            this.initForm()
-          } else {
-            this.$message({
-              type: 'warning',
-              message: res.message
-            })
-          }
+          })
+          this.$message({
+            type: 'success',
+            message: '排课成功'
+          })
+          this.initForm()
         })
         .catch(() => {
           this.loading = false
