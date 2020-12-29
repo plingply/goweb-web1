@@ -1,94 +1,99 @@
 <template>
   <el-dialog title="调整班课" :visible.sync="show" width="600px">
-    <div class="pk_content" v-loading="loading">
+    <div v-loading="loading" class="pk_content">
       <div class="formbox">
         <el-form ref="form" :model="form" label-width="170px">
           <el-form-item label="班级" class="require">
             <el-select
-              style="width: 272px"
-              @change="classChange"
-              size="medium"
               v-model="form.class"
+              style="width: 272px"
+              size="medium"
               placeholder="请选择班级"
               filterable
               disabled
+              @change="classChange"
             >
               <el-option
-                :label="item.name"
-                :value="item.id"
                 v-for="(item, index) in classList"
                 :key="index"
+                :label="item.name"
+                :value="item.id"
               ></el-option>
             </el-select>
           </el-form-item>
           <el-form-item label="课程" class="require">
             <el-select
+              v-model="form.subject"
               style="width: 272px"
               size="medium"
-              v-model="form.subject"
               placeholder="请选择课程"
               filterable
               disabled
             >
               <el-option
-                :label="item.name"
-                :value="item.id"
                 v-for="(item, index) in subjectlist"
                 :key="index"
+                :label="item.name"
+                :value="item.id"
               ></el-option>
             </el-select>
           </el-form-item>
           <el-form-item label="授课老师" class="require">
             <el-select
+              v-model="form.teacher"
               style="width: 272px"
               size="medium"
-              v-model="form.teacher"
               placeholder="请选择授课老师"
               filterable
             >
               <el-option
+                v-for="(item, index) in teacherList"
+                :key="index"
                 :label="item.user_remark"
                 :value="item.user_id"
-                v-for="(item, index) in teacherlist"
-                :key="index"
               ></el-option>
             </el-select>
           </el-form-item>
           <el-form-item label="上课时间" class="require">
             <el-date-picker
+              v-model="form.start_time"
               style="width: 150px"
               size="medium"
-              v-model="form.start_time"
               type="date"
               placeholder="上课日期"
               :picker-options="pickerOptions_1"
             ></el-date-picker>
             <el-time-picker
+              v-model="form.time"
               size="medium"
               style="width: 118px"
               format="HH:mm"
-              v-model="form.time"
               placeholder="上课时间"
             ></el-time-picker>
           </el-form-item>
           <el-form-item label="上课时长" class="require">
             <el-input
+              v-model="form.sc"
               style="width: 150px"
               size="medium"
-              @input="scInput"
-              v-model="form.sc"
               placeholder="上课时长(分钟)"
               maxlength="5"
-            ></el-input
-            >&nbsp;分钟
+              @input="scInput"
+            ></el-input>&nbsp;分钟
           </el-form-item>
           <el-form-item label="教室">
-            <el-select style="width: 272px" size="medium" v-model="form.classroom" placeholder="请选择教室" filterable>
+            <el-select
+              v-model="form.classroom"
+              style="width: 272px"
+              size="medium"
+              placeholder="请选择教室"
+              filterable
+            >
               <el-option
-                :label="item.name"
-                :value="item.id"
                 v-for="(item, index) in classroomlist"
                 :key="index"
+                :label="item.name"
+                :value="item.id"
               ></el-option>
             </el-select>
           </el-form-item>
@@ -102,15 +107,17 @@
 
           <el-form-item label="备注">
             <el-input
+              v-model="form.note"
               type="textarea"
               style="width: 272px"
               size="medium"
-              v-model="form.note"
               placeholder="备注信息"
               maxlength="200"
               rows="3"
             ></el-input>
-            <el-checkbox v-model="form.update_notice"><span class="c2">发送调课通知</span></el-checkbox>
+            <el-checkbox v-model="form.update_notice">
+              <span class="c2">发送调课通知</span>
+            </el-checkbox>
           </el-form-item>
         </el-form>
       </div>
@@ -125,7 +132,7 @@
 
 <script>
 export default {
-  props: ['showtime', 'pkdata', 'classroomlist', 'teacherlist', 'classList'],
+  props: ['showtime', 'pkdata', 'classroomlist', 'teacherList', 'classList'],
   data() {
     return {
       show: false,
@@ -184,7 +191,7 @@ export default {
     scInput() {},
 
     classChange(id) {
-      this.classList.map(item => {
+      this.classList.map((item) => {
         if (item.id == id) {
           this.subjectlist = item.course_list
         }
@@ -193,10 +200,10 @@ export default {
 
     updatefunc(type) {
       if (!this.verification()) return
-      let time = new Date(this.form.time)
+      const time = new Date(this.form.time)
       this.hours_time = time.getTime() - time.setHours(0, 0, 0)
-      let start_time = parseInt((this.form.start_time.setHours(0, 0, 0) + this.hours_time) / 1000)
-      let data = {
+      const start_time = parseInt((this.form.start_time.setHours(0, 0, 0) + this.hours_time) / 1000)
+      const data = {
         merchant_id: this.pkdata.merchant_id,
         grade_id: this.form.class,
         course_id: this.form.subject,
@@ -212,7 +219,7 @@ export default {
         update_notice: this.form.update_notice ? '1' : '2'
       }
 
-      this._NET.jw_paike_update(data, true).then(res => {
+      this._NET.jw_paike_update(data, true).then((res) => {
         if (res.status == 'ok') {
           this._alert({
             type: 'success',
@@ -245,10 +252,10 @@ export default {
 
     quedingfun() {
       if (!this.verification()) return
-      let time = new Date(this.form.time)
+      const time = new Date(this.form.time)
       this.hours_time = time.getTime() - time.setHours(0, 0, 0)
-      let start_time = parseInt((this.form.start_time.setHours(0, 0, 0) + this.hours_time) / 1000)
-      let data = {
+      const start_time = parseInt((this.form.start_time.setHours(0, 0, 0) + this.hours_time) / 1000)
+      const data = {
         merchant_id: this.mymange,
         grade_id: this.form.class,
         course_id: this.form.subject,

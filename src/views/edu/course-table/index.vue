@@ -8,9 +8,15 @@
         <!-- 课表操作部分 -->
         <div class="btnbox">
           <div class="left">
-            <span class="end"> <i></i>已上课 </span>
-            <span class="wait"> <i></i>待上课 </span>
-            <span class="ing"> <i></i>上课中 </span>
+            <span class="end">
+              <i></i>已上课
+            </span>
+            <span class="wait">
+              <i></i>待上课
+            </span>
+            <span class="ing">
+              <i></i>上课中
+            </span>
           </div>
           <div v-if="type == 'week' && calendarList.item.length > 0" class="center">
             <el-button plain icon="el-icon-arrow-left" @click="prew"></el-button>
@@ -30,15 +36,21 @@
           </div>
           <div class="right">
             <div class="label_list">
-              <span class="label_list_row" :class="{ active: type == 'week' }" @click="weekandmonthFun('week')"
-                >周</span
-              >
-              <span class="label_list_row" :class="{ active: type == 'month' }" @click="weekandmonthFun('month')"
-                >月</span
-              >
-              <span class="label_list_row" :class="{ active: type == 'list' }" @click="weekandmonthFun('list')"
-                >列表</span
-              >
+              <span
+                class="label_list_row"
+                :class="{ active: type == 'week' }"
+                @click="weekandmonthFun('week')"
+              >周</span>
+              <span
+                class="label_list_row"
+                :class="{ active: type == 'month' }"
+                @click="weekandmonthFun('month')"
+              >月</span>
+              <span
+                class="label_list_row"
+                :class="{ active: type == 'list' }"
+                @click="weekandmonthFun('list')"
+              >列表</span>
             </div>
           </div>
         </div>
@@ -55,7 +67,12 @@
     </div>
 
     <!-- 班科 -->
-    <paike-class :show.sync="paikeClassShow" :class-list="classList"></paike-class>
+    <paike-class
+      :show.sync="paikeClassShow"
+      :class-list="classList"
+      :subject-list="subjectList"
+      :teacher-list="teacherList"
+    ></paike-class>
   </div>
 </template>
 <script src="./index.js"></script>

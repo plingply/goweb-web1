@@ -3,6 +3,8 @@ import monthCourseTable from './componts/month'
 import listCourseTable from './componts/list'
 import paikeClass from './componts/paike-class/index.vue'
 import { getClassSimpleList } from '@/api/class'
+import { getSubjectList } from '@/api/subject'
+import { getTeacherList } from '@/api/teacher'
 export default {
   data() {
     return {
@@ -13,7 +15,9 @@ export default {
       },
 
       paikeClassShow: false,
-      classList: []
+      classList: [],
+      subjectList: [],
+      teacherList: []
     }
   },
 
@@ -25,7 +29,12 @@ export default {
   },
 
   created() {
+    // 获取班级列表
     this.getClassSimpleList()
+    // 获取课程列表
+    this.getSubjectList()
+    // 老师列表
+    this.getTeacherList()
   },
 
   methods: {
@@ -52,6 +61,26 @@ export default {
       }
       getClassSimpleList(params).then(res => {
         this.classList = res.data
+      })
+    },
+
+    getSubjectList() {
+      const params = {
+        school_id: this.school_id,
+        campus_id: this.campus_id
+      }
+      getSubjectList(params).then(res => {
+        this.subjectList = res.data.item
+      })
+    },
+
+    getTeacherList() {
+      const params = {
+        school_id: this.school_id,
+        campus_id: this.campus_id
+      }
+      getTeacherList(params).then(res => {
+        this.teacherList = res.data.item
       })
     }
   }

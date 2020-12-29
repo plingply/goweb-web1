@@ -1,4 +1,5 @@
 import paikeEditor from '../paike-editor/index'
+import { checkPaikeConflict } from '@/api/course'
 export default {
   props: {
     show: {
@@ -9,7 +10,11 @@ export default {
       type: Array,
       default: () => []
     },
-    teacherlist: {
+    subjectList: {
+      type: Array,
+      default: () => []
+    },
+    teacherList: {
       type: Array,
       default: () => []
     },
@@ -67,9 +72,6 @@ export default {
       // 备注
       note: '',
 
-      // 排课发送通知
-      is_notice: '1',
-
       step: '1',
 
       weeklist: [
@@ -113,8 +115,6 @@ export default {
 
       // 记录小时
       hours_time: '',
-
-      subjectlist: [],
 
       pickerOptions: {
         disabledDate(v) {
@@ -264,7 +264,7 @@ export default {
           const e = s + item.len * 60 * 1000
           if ((start < s && end > s) || (start >= s && start < e)) {
             // 冲突
-            if (curent.grade_id == item.grade_id) {
+            if (curent.class_id == item.class_id) {
               item.class_ct = true
             }
 
@@ -272,7 +272,7 @@ export default {
               item.classroom_ct = true
             }
 
-            if (curent.teacher_ids == item.teacher_ids) {
+            if (curent.teacher_id == item.teacher_id) {
               item.teacher_ct = true
             }
           }
@@ -281,7 +281,7 @@ export default {
     },
 
     // 列表修改排课
-    editorfunc(obj, index, is_notice) {
+    editorfunc(obj, index) {
       this.pkdata = obj
       this.edtindex = index
       this.edshow = Date.now()
@@ -295,43 +295,38 @@ export default {
       this.paikeText = `冲突检查中...`
 
       const arr = this.waitArr[this.edtindex]
-      const result = {}
       const list = [
         {
-          grade_id: arr.grade_id,
-          course_id: arr.course_id,
-          teacher_ids: arr.teacher_ids,
+          school_id: arr.school_id,
+          campus_id: arr.campus_id,
+          class_id: arr.class_id,
+          subject_id: arr.subject_id,
+          teacher_id: arr.teacher_id,
           start_time: arr.start_time,
           len: arr.len,
           classroom_id: arr.classroom_id,
-          is_notice: arr.is_notice,
           type: 1
         }
       ]
 
-      result.merchant_id = arr.merchant_id
-      result.start_time = arr.start_time
-      result.end_time = arr.start_time + arr.len * 60
-      result.coursetable_list = JSON.stringify(list)
-
-      this.paikeCheck(result).then(res => {
+      this.paikeCheck({ pklist: list }).then(res => {
         this.waitArr[this.edtindex].classroom_ct = false
         this.waitArr[this.edtindex].class_ct = false
         this.waitArr[this.edtindex].teacher_ct = false
         // 0:正常,1000:教室冲突1001:年级冲突1002:老师冲突
 
         if (res.code == 1000) {
-          res.data[result.start_time].forEach(list => {
-            if (list.code == 1000) {
-              this.waitArr[this.edtindex].classroom_ct = true
-            }
-            if (list.code == 1001) {
-              this.waitArr[this.edtindex].class_ct = true
-            }
-            if (list.code == 1002) {
-              this.waitArr[this.edtindex].teacher_ct = true
-            }
-          })
+          // res.data[result.start_time].forEach(list => {
+          //   if (list.code == 1000) {
+          //     this.waitArr[this.edtindex].classroom_ct = true
+          //   }
+          //   if (list.code == 1001) {
+          //     this.waitArr[this.edtindex].class_ct = true
+          //   }
+          //   if (list.code == 1002) {
+          //     this.waitArr[this.edtindex].teacher_ct = true
+          //   }
+          // })
         }
 
         this.localCheck(this.edtindex)
@@ -363,29 +358,22 @@ export default {
         this.loading = true
         this.paikeText = `冲突检查中...`
 
-        const result = {}
         const list = []
-        const end = this.waitArr[this.waitArr.length - 1]
 
-        this.waitArr.map((item, index) => {
+        this.waitArr.map(item => {
           list.push({
-            grade_id: item.grade_id,
-            course_id: item.course_id,
-            teacher_ids: item.teacher_ids,
+            school_id: this.school_id,
+            campus_id: this.campus_id,
+            class_id: item.class_id,
+            subject_id: item.subject_id,
+            teacher_id: item.teacher_id,
             start_time: item.start_time,
-            is_notice: item.is_notice,
             len: item.len,
             classroom_id: item.classroom_id,
             type: 1
           })
         })
-
-        result.merchant_id = this.waitArr[0].merchant_id
-        result.start_time = this.waitArr[0].start_time
-        result.end_time = end.start_time + end.len * 60
-        result.coursetable_list = JSON.stringify(list)
-
-        this.paikeCheck(result)
+        this.paikeCheck(list)
           .then(res => {
             this.loading = false
             if (res.status == 'ok') {
@@ -448,12 +436,13 @@ export default {
       this.loading = true
       this.paikeText = `冲突检查中...`
 
-      const result = {}
       const list = [
         {
-          grade_id: this.class_id,
-          course_id: this.subject_id,
-          teacher_ids: this.teacher_id,
+          school_id: this.school_id,
+          campus_id: this.campus_id,
+          class_id: this.class_id,
+          subject_id: this.subject_id,
+          teacher_id: this.teacher_id,
           start_time: parseInt(this.start_time.setHours(0, 0, 0) + this.hours_time),
           len: this.time_len,
           classroom_id: this.classroom_id,
@@ -461,19 +450,14 @@ export default {
         }
       ]
 
-      result.merchant_id = this.mymange
-      result.start_time = parseInt(this.start_time.setHours(0, 0, 0) + this.hours_time)
-      result.end_time = parseInt(this.start_time.setHours(0, 0, 0) + this.hours_time) + this.time_len * 60
-      result.coursetable_list = JSON.stringify(list)
-
-      this.paikeCheck(result)
+      this.paikeCheck({ pklist: list })
         .then(res => {
           this.loading = false
           if (res.status == 'ok') {
             this.singlePaike()
           } else {
             if (res.code == 1000) {
-              this.checkCodeList = res.data[result.start_time]
+              // this.checkCodeList = res.data[result.start_time]
               this.step = '3'
             } else {
               this.$message({
@@ -494,14 +478,14 @@ export default {
         {
           start_time: parseInt(this.start_time.setHours(0, 0, 0) + this.hours_time),
           len: this.time_len,
-          teacher_ids: this.teacher_id,
-          classroom_id: this.classroom_id,
-          is_notice: this.is_notice
+          teacher_id: this.teacher_id,
+          classroom_id: this.classroom_id
         }
       ]
 
-      result.merchant_id = this.mymange
-      result.grade_id = this.class_id
+      result.school_id = this.school_id
+      result.campus_id = this.campus_id
+      result.class_id = this.class_id
       result.course_id = this.subject_id
       result.ignore_conflict = 1
       result.type = 1
@@ -554,14 +538,14 @@ export default {
         list.push({
           start_time: item.start_time,
           len: item.len,
-          teacher_ids: item.teacher_ids,
-          classroom_id: item.classroom_id,
-          is_notice: this.is_notice
+          teacher_id: item.teacher_id,
+          classroom_id: item.classroom_id
         })
       })
 
-      result.merchant_id = publicObj.merchant_id
-      result.grade_id = publicObj.grade_id
+      result.school_id = publicObj.school_id
+      result.campus_id = publicObj.campus_id
+      result.class_id = publicObj.class_id
       result.course_id = publicObj.course_id
       result.ignore_conflict = 1
       result.type = 1
@@ -593,7 +577,7 @@ export default {
 
     // 单次排课
     paikeCheck(obj) {
-      return this._NET.jw_paike_check(obj, true)
+      return checkPaikeConflict({}, obj)
     },
 
     /**
@@ -665,11 +649,11 @@ export default {
 
       for (let i = 0; i < timeArray.length; i++) {
         subjectArr.push({
-          merchant_id: this.mymange,
-          grade_id: this.class_id,
+          school_id: this.school_id,
+          campus_id: this.campus_id,
+          class_id: this.class_id,
           course_id: this.subject_id,
-          teacher_ids: this.teacher_id,
-          is_notice: this.is_notice,
+          teacher_id: this.teacher_id,
           start_time: timeArray[i],
           len: this.time_len,
           classroom_id: this.classroom_id,
@@ -791,16 +775,6 @@ export default {
     timeLenInput(v) {
       v = parseInt(v) ? parseInt(v) : ''
       this.time_len = v
-    },
-
-    // 选择班级
-    classChange(id) {
-      this.subject_id = ''
-      this.classList.map(item => {
-        if (item.id == id) {
-          this.subjectlist = item.course_list
-        }
-      })
     },
 
     // 验证函数

@@ -19,6 +19,12 @@ p {
   margin: 0;
 }
 
+body .require .el-form-item__label:before {
+  content: "*";
+  color: #ff6562;
+  margin-right: 4px;
+}
+
 label {
   font-weight: 700;
 }
