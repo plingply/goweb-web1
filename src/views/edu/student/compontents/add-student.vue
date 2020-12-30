@@ -209,9 +209,8 @@ export default {
           this.visible = false
           this.$emit('callback')
         })
-        .catch((err) => {
+        .catch(() => {
           this.submitLoading = false
-          this.$message.error(err)
         })
     },
 
@@ -233,9 +232,8 @@ export default {
           this.visible = false
           this.$emit('callback')
         })
-        .catch((err) => {
+        .catch(() => {
           this.submitLoading = false
-          this.$message.error(err)
         })
     }
   }

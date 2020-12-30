@@ -45,3 +45,15 @@ export const courseStatus = {
   '2': '上课中',
   '3': '已下课'
 }
+
+export const cardType = {
+  '1': '课时卡',
+  '2': '储值卡',
+  '3': '期限卡'
+}
+
+export const cardTypeStatus = {
+  '1': '未开卡',
+  '2': '已开发',
+  '3': '已作废'
+}

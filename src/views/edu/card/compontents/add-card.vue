@@ -8,14 +8,25 @@
   >
     <template #content>
       <div class="myfrom">
-        <el-form ref="form" :model="form" label-width="80px">
-          <el-form-item label="班级名称">
+        <el-form ref="form" :model="form" label-width="90px">
+          <el-form-item label="学员卡名称">
             <el-input
               v-model="form.card_name"
               maxlength="10"
               style="width: 100%"
               placeholder="请输入学员卡名称"
             />
+          </el-form-item>
+
+          <el-form-item label="卡类型">
+            <el-select
+              v-model="form.card_type"
+              :disabled="cardInfo"
+              style="width: 100%"
+              placeholder="请选择"
+            >
+              <el-option v-for="(item,key) in cardType" :key="'k_'+key" :label="item" :value="key"></el-option>
+            </el-select>
           </el-form-item>
 
           <el-form-item label="备注">
@@ -34,6 +45,7 @@
 
 <script>
 import { cardUpdate, cardCreate } from '@/api/card'
+import { cardType } from '@/config/index'
 export default {
   props: {
     show: {
@@ -54,10 +66,12 @@ export default {
     return {
       form: {
         card_name: '',
-        remark: '1',
-        status: '1'
+        card_type: '',
+        remark: '',
+        status: 1
       },
-      submitLoading: false
+      submitLoading: false,
+      cardType
     }
   },
 
@@ -76,13 +90,14 @@ export default {
     onOpen() {
       if (this.cardInfo) {
         Object.keys(this.form).map((k) => {
-          this.form[k] = this.cardInfo[k]
+          this.form[k] = this.cardInfo[k] + ''
         })
       } else {
         this.form = {
           card_name: '',
           remark: '',
-          status: '1'
+          card_type: '',
+          status: 1
         }
       }
     },
@@ -111,9 +126,8 @@ export default {
           this.visible = false
           this.$emit('callback')
         })
-        .catch((err) => {
+        .catch(() => {
           this.submitLoading = false
-          this.$message.error(err)
         })
     },
 
@@ -134,9 +148,8 @@ export default {
           this.visible = false
           this.$emit('callback')
         })
-        .catch((err) => {
+        .catch(() => {
           this.submitLoading = false
-          this.$message.error(err)
         })
     }
   }

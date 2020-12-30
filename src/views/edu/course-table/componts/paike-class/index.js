@@ -290,41 +290,9 @@ export default {
       }
       this.paikeText = `冲突检查中...`
 
-      const arr = this.waitArr[this.edtindex]
-      const list = [
-        {
-          school_id: arr.school_id,
-          campus_id: arr.campus_id,
-          class_id: arr.class_id,
-          subject_id: arr.subject_id,
-          teacher_id: arr.teacher_id,
-          start_time: arr.start_time,
-          len: arr.len,
-          classroom_id: arr.classroom_id,
-          type: 1
-        }
-      ]
-
-      this.paikeCheck({ pklist: list }).then(res => {
-        this.waitArr[this.edtindex].classroom_ct = false
-        this.waitArr[this.edtindex].class_ct = false
-        this.waitArr[this.edtindex].teacher_ct = false
-        // 0:正常,1000:教室冲突1001:年级冲突1002:老师冲突
-
-        if (res.code == 1000) {
-          // res.data[result.start_time].forEach(list => {
-          //   if (list.code == 1000) {
-          //     this.waitArr[this.edtindex].classroom_ct = true
-          //   }
-          //   if (list.code == 1001) {
-          //     this.waitArr[this.edtindex].class_ct = true
-          //   }
-          //   if (list.code == 1002) {
-          //     this.waitArr[this.edtindex].teacher_ct = true
-          //   }
-          // })
-        }
-
+      const arr = [this.waitArr[this.edtindex]]
+      this.paikeCheck(arr).then(res => {
+        this.waitArr[this.edtindex] = res.data[0]
         this.localCheck(this.edtindex)
         this.checkchongtu()
       })
@@ -552,14 +520,12 @@ export default {
           school_id: this.school_id,
           campus_id: this.campus_id,
           class_id: this.class_id,
-          course_id: this.subject_id,
+          subject_id: this.subject_id,
           teacher_id: this.teacher_id,
           start_time: timeArray[i],
           len: this.time_len,
           classroom_id: this.classroom_id,
-          class_ct: false,
-          teacher_ct: false,
-          classroom_ct: false,
+          conflict: '',
           type: 1
         })
       }

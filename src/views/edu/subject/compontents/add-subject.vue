@@ -17,6 +17,33 @@
               placeholder="请输入课程姓名"
             />
           </el-form-item>
+          <el-form-item label="课程消费">
+            <el-checkbox-group v-model="xf">
+              <template v-for="(item,key) in cardType">
+                <div :key="key" style="margin-bottom: 4px">
+                  <el-checkbox :label="key">
+                    {{ item }}
+                    <el-input
+                      v-if="key == 1"
+                      v-model="form.ks_value"
+                      style="width: 150px"
+                      placeholder="课消课时"
+                      :disabled="xf.indexOf('1') == -1"
+                      @input="inputfuncKs"
+                    ></el-input>
+                    <el-input
+                      v-if="key == 2"
+                      v-model="form.cz_value"
+                      style="width: 150px"
+                      placeholder="课消金额"
+                      :disabled="xf.indexOf('2') == -1"
+                      @input="inputfuncCz"
+                    ></el-input>
+                  </el-checkbox>
+                </div>
+              </template>
+            </el-checkbox-group>
+          </el-form-item>
           <el-form-item label="备注">
             <el-input
               v-model="form.remark"
@@ -33,6 +60,8 @@
 
 <script>
 import { subjectUpdate, subjectCreate } from '@/api/subject'
+import { cardType } from '@/config/index'
+import { priceFormat } from '@/utils/index'
 export default {
   props: {
     show: {
@@ -54,9 +83,16 @@ export default {
       form: {
         subject_name: '',
         remark: '',
-        status: '1'
+        status: '1',
+        ks: '',
+        ks_value: '',
+        cz: '',
+        cz_value: '',
+        qx: ''
       },
-      submitLoading: false
+      xf: [],
+      submitLoading: false,
+      cardType
     }
   },
 
@@ -72,16 +108,39 @@ export default {
   },
 
   methods: {
+    inputfuncKs(value) {
+      this.form.ks_value = priceFormat(value)
+    },
+
+    inputfuncCz(value) {
+      this.form.cz_value = priceFormat(value)
+    },
+
     onOpen() {
+      this.xf = []
       if (this.subjectInfo) {
         Object.keys(this.form).map((k) => {
           this.form[k] = this.subjectInfo[k]
         })
+        if (this.form.ks == 1) {
+          this.xf.push('1')
+        }
+        if (this.form.cz == 1) {
+          this.xf.push('2')
+        }
+        if (this.form.qx == 1) {
+          this.xf.push('3')
+        }
       } else {
         this.form = {
           subject_name: '',
           remark: '',
-          status: '1'
+          status: '1',
+          ks: '',
+          ks_value: '',
+          cz: '',
+          cz_value: '',
+          qx: ''
         }
       }
     },
@@ -100,6 +159,17 @@ export default {
       }
       this.submitLoading = true
       const data = { ...this.form }
+      if (this.xf.indexOf('1') > -1) {
+        data.ks = 1
+      }
+
+      if (this.xf.indexOf('2') > -1) {
+        data.cz = 1
+      }
+
+      if (this.xf.indexOf('3') > -1) {
+        data.qx = 1
+      }
       subjectUpdate(params, data)
         .then((res) => {
           this.submitLoading = false
@@ -110,9 +180,8 @@ export default {
           this.visible = false
           this.$emit('callback')
         })
-        .catch((err) => {
+        .catch(() => {
           this.submitLoading = false
-          this.$message.error(err)
         })
     },
 
@@ -123,6 +192,17 @@ export default {
         campus_id: this.campus_id
       }
       const data = { ...this.form }
+      if (this.xf.indexOf('1') > -1) {
+        data.ks = 1
+      }
+
+      if (this.xf.indexOf('2') > -1) {
+        data.cz = 1
+      }
+
+      if (this.xf.indexOf('3') > -1) {
+        data.qx = 1
+      }
       subjectCreate(params, data)
         .then((res) => {
           this.submitLoading = false
@@ -133,9 +213,8 @@ export default {
           this.visible = false
           this.$emit('callback')
         })
-        .catch((err) => {
+        .catch(() => {
           this.submitLoading = false
-          this.$message.error(err)
         })
     }
   }

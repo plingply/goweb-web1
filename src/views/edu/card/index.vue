@@ -33,7 +33,7 @@
 import { getCardList } from '@/api/card'
 import { dateFormat } from '@/utils/date'
 import addCard from './compontents/add-card'
-import { cardStatus } from '@/config/index'
+import { cardStatus, cardType } from '@/config/index'
 
 export default {
   components: {
@@ -47,6 +47,13 @@ export default {
         {
           prop: 'card_name',
           label: '学员卡名称'
+        },
+        {
+          prop: 'card_type',
+          label: '学员卡类型',
+          formatter(row, column, value) {
+            return cardType[value]
+          }
         },
         {
           prop: 'status',

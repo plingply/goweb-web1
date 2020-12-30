@@ -112,9 +112,7 @@ export default {
               this.$message.success('离班成功')
               this.getClassMemberList()
             })
-            .catch(() => {
-              this.$message.error('离班失败')
-            })
+            .catch(() => {})
         })
         .catch(() => {})
     },
