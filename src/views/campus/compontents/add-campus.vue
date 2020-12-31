@@ -10,30 +10,15 @@
       <div class="myfrom">
         <el-form ref="form" :model="form" label-width="80px">
           <el-form-item label="校区名称">
-            <el-input
-              v-model="form.campus_name"
-              style="width: 100%"
-              maxlength="20"
-              placeholder="请输入校区名称"
-            />
+            <el-input v-model="form.campus_name" style="width: 100%" maxlength="20" placeholder="请输入校区名称" />
           </el-form-item>
 
           <el-form-item label="校区地址">
-            <el-cascader
-              v-model="cityArr"
-              style="width: 100%"
-              :props="props"
-              @change="handleChange"
-            />
+            <el-cascader clearable v-model="cityArr" style="width: 100%" :props="props" @change="handleChange" />
           </el-form-item>
 
           <el-form-item label="详细地址">
-            <el-input
-              v-model="form.address"
-              maxlength="50"
-              style="width: 100%"
-              placeholder="请输入校区详细地址"
-            />
+            <el-input v-model="form.address" maxlength="50" style="width: 100%" placeholder="请输入校区详细地址" />
           </el-form-item>
         </el-form>
       </div>
@@ -77,10 +62,11 @@ export default {
           if (level == 0) {
             id = 1
           }
-          getCityList(id).then((res) => {
-            res.data.map((item) => {
+          getCityList(id).then(res => {
+            res.data.map(item => {
               item.value = item.code
               item.label = item.name
+              item.leaf = level >= 2
               return item
             })
             resolve(res.data)
@@ -108,32 +94,23 @@ export default {
 
   methods: {
     getCityList(id, key) {
-      getCityList(id).then((res) => {
+      getCityList(id).then(res => {
         this[key] = res.data
       })
     },
 
-    handleChange(data) {
-      console.log(data)
-      // this.form.province = data[0] || this.form.province
-      // this.form.city = data[1] || this.form.city
-      // this.form.area = data[2] || this.form.area
-    },
-
     onOpen() {
       if (this.campusInfo) {
-        Object.keys(this.form).map((k) => {
+        Object.keys(this.form).map(k => {
           this.form[k] = this.campusInfo[k]
         })
         this.cityArr = [this.form.province, this.form.city, this.form.area]
       } else {
-        Object.keys(this.form).map((k) => {
+        Object.keys(this.form).map(k => {
           this.form[k] = ''
         })
         this.cityArr = []
       }
-
-      this.getCityList(1, 'provinceList')
     },
 
     postDataForCampus() {
@@ -149,8 +126,11 @@ export default {
         campus_id: this.campusInfo.id
       }
       this.submitLoading = true
+      this.form.province = this.cityArr[0]
+      this.form.city = this.cityArr[1]
+      this.form.area = this.cityArr[2]
       campusUpdate(params, this.form)
-        .then((res) => {
+        .then(res => {
           this.submitLoading = false
           this.$message({
             message: '更新成功',
@@ -159,9 +139,8 @@ export default {
           this.visible = false
           this.$emit('callback')
         })
-        .catch((err) => {
+        .catch(err => {
           this.submitLoading = false
-          this.$message.error(err)
         })
     },
 
@@ -170,8 +149,11 @@ export default {
         school_id: this.school_id
       }
       this.submitLoading = true
+      this.form.province = this.cityArr[0]
+      this.form.city = this.cityArr[1]
+      this.form.area = this.cityArr[2]
       campusCreate(params, this.form)
-        .then((res) => {
+        .then(res => {
           this.submitLoading = false
           this.$message({
             message: '创建成功',
@@ -180,9 +162,8 @@ export default {
           this.visible = false
           this.$emit('callback')
         })
-        .catch((err) => {
+        .catch(err => {
           this.submitLoading = false
-          this.$message.error(err)
         })
     }
   }

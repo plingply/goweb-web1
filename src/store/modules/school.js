@@ -1,5 +1,6 @@
 import { getSchoolList, getCampusSimpleList } from '@/api/school'
 import $s from '@/utils/storage'
+import router from '../../router'
 
 const state = {
   schoolList: [],
@@ -36,7 +37,7 @@ const actions = {
           const { data } = response
 
           if (!data || data.length === 0) {
-            reject('暂无学校')
+            router.push({ name: 'createSchool' })
             return
           }
           commit('SET_SCHOOLLIST', data)

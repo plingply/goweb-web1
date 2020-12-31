@@ -21,14 +21,9 @@
       </template>
     </common-table>
 
-    <add-student
-      :show.sync="showAddStudent"
-      :title="title"
-      :student-info="studentInfo"
-      @callback="studentCallback"
-    />
+    <add-student :show.sync="showAddStudent" :title="title" :student-info="studentInfo" @callback="studentCallback" />
 
-    <add-member :show.sync="showAddMember" :student_id="studentInfo.id" member_type="1"></add-member>
+    <add-member :show.sync="showAddMember" :student_id="studentInfo && studentInfo.id" member_type="1"></add-member>
   </page>
 </template>
 
@@ -122,7 +117,7 @@ export default {
         page: this.page,
         limit: this.limit
       })
-        .then((res) => {
+        .then(res => {
           this.loading = false
           this.list = res.data.item
           this.total = res.data.total

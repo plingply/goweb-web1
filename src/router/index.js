@@ -11,6 +11,7 @@ import componentsRouter from './modules/components'
 import chartsRouter from './modules/charts'
 import tableRouter from './modules/table'
 import nestedRouter from './modules/nested'
+import schoolRouter from './modules/school'
 import edu from './modules/edu'
 
 export const constantRoutes = [
@@ -30,6 +31,7 @@ export const constantRoutes = [
     component: () => import('@/views/login/index'),
     hidden: true
   },
+  schoolRouter,
   {
     path: '/auth-redirect',
     component: () => import('@/views/login/auth-redirect'),
