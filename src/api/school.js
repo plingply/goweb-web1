@@ -43,3 +43,12 @@ export function getCampusSimpleList(params, data) {
     data
   })
 }
+
+export function getCityList(id, params, data) {
+  return request({
+    url: `/api/city/${id}`,
+    method: 'get',
+    params,
+    data
+  })
+}

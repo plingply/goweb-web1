@@ -22,7 +22,7 @@
             <el-cascader
               v-model="cityArr"
               style="width: 100%"
-              :options="city"
+              :props="props"
               @change="handleChange"
             />
           </el-form-item>
@@ -42,8 +42,7 @@
 </template>
 
 <script>
-import city from './city'
-import { campusUpdate, campusCreate } from '@/api/school'
+import { campusUpdate, campusCreate, getCityList } from '@/api/school'
 export default {
   props: {
     show: {
@@ -69,8 +68,29 @@ export default {
         city: '',
         area: ''
       },
-      city,
+      props: {
+        lazy: true,
+        lazyLoad(node, resolve) {
+          console.log(node)
+          const { level } = node
+          let id = node.value
+          if (level == 0) {
+            id = 1
+          }
+          getCityList(id).then((res) => {
+            res.data.map((item) => {
+              item.value = item.code
+              item.label = item.name
+              return item
+            })
+            resolve(res.data)
+          })
+        }
+      },
       cityArr: [],
+      provinceList: [],
+      cityList: [],
+      areaList: [],
       submitLoading: false
     }
   },
@@ -87,11 +107,17 @@ export default {
   },
 
   methods: {
+    getCityList(id, key) {
+      getCityList(id).then((res) => {
+        this[key] = res.data
+      })
+    },
+
     handleChange(data) {
       console.log(data)
-      this.form.province = data[0] || this.form.province
-      this.form.city = data[1] || this.form.city
-      this.form.area = data[2] || this.form.area
+      // this.form.province = data[0] || this.form.province
+      // this.form.city = data[1] || this.form.city
+      // this.form.area = data[2] || this.form.area
     },
 
     onOpen() {
@@ -106,6 +132,8 @@ export default {
         })
         this.cityArr = []
       }
+
+      this.getCityList(1, 'provinceList')
     },
 
     postDataForCampus() {
