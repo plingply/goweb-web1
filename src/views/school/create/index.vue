@@ -4,15 +4,35 @@
       <div class="title">欢迎光临，创建属于您的学校把！</div>
       <el-form ref="form" :model="form" label-width="80px">
         <el-form-item label="学校名称">
-          <el-input v-model="form.school_name"></el-input>
+          <el-input v-model="form.school_name" maxlength="20"></el-input>
         </el-form-item>
         <el-form-item label="校区名称">
-          <el-input v-model="form.campus_name"></el-input>
+          <el-input v-model="form.campus_name" maxlength="20"></el-input>
           <div class="tips">创建学校，必须创建一个校区</div>
         </el-form-item>
-        <el-form-item label="LOGO"> </el-form-item>
+        <el-form-item label="LOGO">
+          <div class="avatar-box">
+            <el-image
+              @click.native="imagecropperShow = true"
+              style="width: 80px; height: 80px"
+              :src="form.logo"
+              fit="cover"
+            ></el-image>
+          </div>
+          <image-cropper
+            v-show="imagecropperShow"
+            :key="imagecropperKey"
+            :width="300"
+            :height="300"
+            url="/api/upload/file"
+            field="file"
+            lang-type="en"
+            @close="close"
+            @crop-upload-success="cropSuccess"
+          />
+        </el-form-item>
         <el-form-item label="">
-          <el-button type="primary" style="width: 100%">创建并进入系统</el-button>
+          <el-button type="primary" style="width: 100%" @click="createSchool">创建并进入系统</el-button>
         </el-form-item>
       </el-form>
     </el-card>
@@ -20,6 +40,7 @@
 </template>
 
 <script>
+import { createSchool } from '@/api/school'
 export default {
   data() {
     return {
@@ -27,7 +48,27 @@ export default {
         school_name: '',
         campus_name: '',
         logo: ''
-      }
+      },
+      imagecropperShow: false,
+      imagecropperKey: 0
+    }
+  },
+
+  methods: {
+    cropSuccess(resData) {
+      this.imagecropperShow = false
+      this.imagecropperKey = this.imagecropperKey + 1
+      this.form.logo = resData
+    },
+    close() {
+      this.imagecropperShow = false
+    },
+
+    createSchool() {
+      createSchool(this.form).then(res => {
+        this.$message.success(res.message)
+        this.$router.push('/')
+      })
     }
   }
 }

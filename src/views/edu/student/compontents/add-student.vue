@@ -12,27 +12,17 @@
           <el-row :gutter="20">
             <el-col :span="16">
               <el-form-item label="学生名称">
-                <el-input
-                  v-model="form.student_name"
-                  maxlength="10"
-                  style="width: 100%"
-                  placeholder="请输入学生姓名"
-                />
+                <el-input v-model="form.student_name" maxlength="10" style="width: 100%" placeholder="请输入学生姓名" />
               </el-form-item>
               <el-form-item label="学生性别">
                 <el-radio-group v-model="form.sex">
-                  <el-radio v-for="(item,index) in sexObj" :key="index" :label="index">{{ item }}</el-radio>
+                  <el-radio v-for="(item, index) in sexObj" :key="index" :label="index">{{ item }}</el-radio>
                 </el-radio-group>
               </el-form-item>
             </el-col>
             <el-col :span="8">
               <div class="avatar-box">
-                <pan-thumb
-                  :image="form.avatar"
-                  width="90px"
-                  height="90px"
-                  @click.native="imagecropperShow=true"
-                >
+                <pan-thumb :image="form.avatar" width="90px" height="90px" @click.native="imagecropperShow = true">
                   <div class="avatar-upload">
                     <i class="el-icon-picture"></i>
                     <div>学生头像</div>
@@ -44,7 +34,7 @@
                 :key="imagecropperKey"
                 :width="300"
                 :height="300"
-                url="http://127.0.0.1:8199/api/upload/file"
+                url="/api/upload/file"
                 field="file"
                 lang-type="en"
                 @close="close"
@@ -53,12 +43,7 @@
             </el-col>
             <el-col :span="12">
               <el-form-item label="学校名称">
-                <el-input
-                  v-model="form.school_name"
-                  maxlength="50"
-                  style="width: 100%"
-                  placeholder="请输入学校名称"
-                />
+                <el-input v-model="form.school_name" maxlength="50" style="width: 100%" placeholder="请输入学校名称" />
               </el-form-item>
             </el-col>
             <el-col :span="12">
@@ -73,22 +58,12 @@
             </el-col>
             <el-col :span="24">
               <el-form-item label="学校地址">
-                <el-input
-                  v-model="form.address"
-                  maxlength="50"
-                  style="width: 100%"
-                  placeholder="请输入学校地址"
-                />
+                <el-input v-model="form.address" maxlength="50" style="width: 100%" placeholder="请输入学校地址" />
               </el-form-item>
             </el-col>
             <el-col :span="24">
               <el-form-item label="备注">
-                <el-input
-                  v-model="form.remark"
-                  maxlength="100"
-                  style="width: 100%"
-                  placeholder="备注信息"
-                />
+                <el-input v-model="form.remark" maxlength="100" style="width: 100%" placeholder="备注信息" />
               </el-form-item>
             </el-col>
           </el-row>
@@ -166,7 +141,7 @@ export default {
     onOpen() {
       if (this.studentInfo) {
         console.log(this.studentInfo)
-        Object.keys(this.form).map((k) => {
+        Object.keys(this.form).map(k => {
           this.form[k] = this.studentInfo[k]
         })
         this.form.birthday = this.form.birthday ? new Date(this.form.birthday) : ''
@@ -200,7 +175,7 @@ export default {
       const data = { ...this.form }
       data.birthday = data.birthday ? data.birthday.getTime() : ''
       studentUpdate(params, data)
-        .then((res) => {
+        .then(res => {
           this.submitLoading = false
           this.$message({
             message: '更新成功',
@@ -223,7 +198,7 @@ export default {
       const data = { ...this.form }
       data.birthday = data.birthday ? data.birthday.getTime() : ''
       studentCreate(params, data)
-        .then((res) => {
+        .then(res => {
           this.submitLoading = false
           this.$message({
             message: '创建成功',

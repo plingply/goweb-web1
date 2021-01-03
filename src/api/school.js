@@ -8,6 +8,14 @@ export function getSchoolList(data) {
   })
 }
 
+export function createSchool(data) {
+  return request({
+    url: '/api/school/create',
+    method: 'post',
+    data
+  })
+}
+
 export function getCampusList(params, data) {
   return request({
     url: '/api/school/campus/list',
