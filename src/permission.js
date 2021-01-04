@@ -27,6 +27,7 @@ router.beforeEach(async (to, from, next) => {
   const hasToken = getToken()
 
   if (hasToken) {
+    console.log('to:', to)
     if (to.path === '/login') {
       // if is logged in, redirect to the home page
       next({ path: '/' })
@@ -47,45 +48,8 @@ router.beforeEach(async (to, from, next) => {
 
             // dynamically add accessible routes
             router.addRoutes(accessRoutes)
-            // hack method to ensure that addRoutes is complete
-            // set the replace: true, so the navigation will not leave a history record
 
-            store
-              .dispatch('school/getSchoolList')
-              .then(res => {
-                store.commit('school/SET_SCHOOLLIST', res)
-                let schoolId = $s.ls_get('school_id')
-
-                const result = res.some(item => {
-                  if (item.school_id === schoolId) {
-                    return true
-                  }
-                })
-                console.log('result:', result, schoolId)
-                if (!schoolId || !result) {
-                  schoolId = res[0].school_id
-                }
-                store.commit('school/SET_SCHOOLID', schoolId)
-
-                store
-                  .dispatch('school/getCampusSimpleList', {
-                    school_id: schoolId
-                  })
-                  .then(res => {
-                    NProgress.done()
-                    next({ ...to, replace: true })
-                  })
-                  .catch(error => {
-                    store.dispatch('user/resetToken')
-                    Message.error(error)
-                    NProgress.done()
-                  })
-              })
-              .catch(error => {
-                store.dispatch('user/resetToken')
-                Message.error(error)
-                NProgress.done()
-              })
+            GetSchoolList(next, to)
           } else {
             NProgress.done()
           }
@@ -107,3 +71,46 @@ router.afterEach(() => {
   // finish progress bar
   NProgress.done()
 })
+
+function GetSchoolList(next, to) {
+  store
+    .dispatch('school/getSchoolList')
+    .then(res => {
+      store.commit('school/SET_SCHOOLLIST', res)
+      let schoolId = $s.ls_get('school_id')
+
+      const result = res.some(item => {
+        if (item.school_id === schoolId) {
+          return true
+        }
+      })
+      console.log('result:', result, schoolId)
+      if (!schoolId || !result) {
+        schoolId = res[0].school_id
+      }
+      store.commit('school/SET_SCHOOLID', schoolId)
+
+      store
+        .dispatch('school/getCampusSimpleList', {
+          school_id: schoolId
+        })
+        .then(res => {
+          NProgress.done()
+          if (to) {
+            next({ ...to, replace: true })
+          } else {
+            next('/')
+          }
+        })
+        .catch(error => {
+          store.dispatch('user/resetToken')
+          Message.error(error)
+          NProgress.done()
+        })
+    })
+    .catch(error => {
+      store.dispatch('user/resetToken')
+      Message.error(error)
+      NProgress.done()
+    })
+}

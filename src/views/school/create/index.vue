@@ -13,10 +13,10 @@
         <el-form-item label="LOGO">
           <div class="avatar-box">
             <el-image
-              @click.native="imagecropperShow = true"
               style="width: 80px; height: 80px"
               :src="form.logo"
               fit="cover"
+              @click.native="imagecropperShow = true"
             ></el-image>
           </div>
           <image-cropper
@@ -31,7 +31,7 @@
             @crop-upload-success="cropSuccess"
           />
         </el-form-item>
-        <el-form-item label="">
+        <el-form-item label>
           <el-button type="primary" style="width: 100%" @click="createSchool">创建并进入系统</el-button>
         </el-form-item>
       </el-form>
@@ -41,6 +41,7 @@
 
 <script>
 import { createSchool } from '@/api/school'
+import $s from '@/utils/storage'
 export default {
   data() {
     return {
@@ -65,10 +66,46 @@ export default {
     },
 
     createSchool() {
-      createSchool(this.form).then(res => {
+      createSchool(this.form).then((res) => {
         this.$message.success(res.message)
         this.$router.push('/')
       })
+    },
+
+    GetSchoolList() {
+      this.$store
+        .dispatch('school/getSchoolList')
+        .then((res) => {
+          this.$store.commit('school/SET_SCHOOLLIST', res)
+          let schoolId = $s.ls_get('school_id')
+
+          const result = res.some((item) => {
+            if (item.school_id === schoolId) {
+              return true
+            }
+          })
+          console.log('result:', result, schoolId)
+          if (!schoolId || !result) {
+            schoolId = res[0].school_id
+          }
+          this.$store.commit('school/SET_SCHOOLID', schoolId)
+
+          this.$store
+            .dispatch('school/getCampusSimpleList', {
+              school_id: schoolId
+            })
+            .then((res) => {
+              this.$router.replace('/')
+            })
+            .catch((error) => {
+              this.$store.dispatch('user/resetToken')
+              this.$message.error(error)
+            })
+        })
+        .catch((error) => {
+          this.$store.dispatch('user/resetToken')
+          this.$message.error(error)
+        })
     }
   }
 }
