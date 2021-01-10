@@ -9,6 +9,7 @@
         <span>{{ error }}</span> 条
       </span>
       >
+      <el-button @click="getZuowenList">查询</el-button>
     </div>
 
     <common-table
